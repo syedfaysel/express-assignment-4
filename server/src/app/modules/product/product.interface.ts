@@ -1,4 +1,3 @@
-
 export interface IProduct {
   productId: string;
   name: string;
@@ -10,5 +9,3 @@ export interface IProduct {
   createdAt: Date;
   updatedAt: Date;
 }
-
-
