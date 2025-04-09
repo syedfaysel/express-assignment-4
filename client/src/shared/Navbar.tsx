@@ -66,10 +66,14 @@ const Navbar = () => {
             <button className="w-full px-4 py-2 border border-[#1E2525] text-[#1E2525] rounded hover:bg-blue-50 transition">
               Login
             </button>
+            
             <button className="w-full px-4 py-2 bg-[#1E2525] text-white rounded hover:bg-[#1E2525] transition">
               Sign Up
             </button>
+           
+
           </div>
+          
         </div>
       )}
     </nav>
