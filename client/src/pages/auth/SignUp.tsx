@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+
 const signUp = () => {
     return (
-        <main className="py-14">
+        <div className="py-14">
             <div className="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8">
                 <div className="max-w-lg mx-auto space-y-3 sm:text-center">
                     <p className="text-gray-800 text-3xl font-semibold sm:text-4xl">
@@ -49,6 +51,10 @@ const signUp = () => {
                                 placeholder="Enter your password"
                             />
                         </div>
+
+                        <div>
+                            <p className="w-full mt-2 font-medium">Already have an account? <span className="font-bold text-blue-600"> <Link to="/login">Login</Link> </span></p>
+                        </div>
                         
                         <button
                             className="w-full px-4 py-2 text-white font-medium bg-black hover:bg-gray-700 active:bg-gray-700 rounded-lg duration-150"
@@ -56,9 +62,10 @@ const signUp = () => {
                             Submit
                         </button>
                     </form>
+                    
                 </div>
             </div>
-        </main>
+        </div>
     );
 };
 
