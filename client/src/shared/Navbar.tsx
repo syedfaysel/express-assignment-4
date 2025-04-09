@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react"; // Icon library, install via `npm install lucide-react`
 import logo from "../assets/store-logo.png";
+import { NavLink } from "react-router-dom";
 
 const navLinks = [
-  { name: "Home", href: "#home" },
-  { name: "All Product", href: "#features" },
+  { name: "Home", href: "/" },
+  { name: "All Product", href: "/all-products" },
   { name: "About Us", href: "#pricing" },
   { name: "Contact", href: "#contact" },
 ];
@@ -26,9 +27,9 @@ const Navbar = () => {
         <ul className="hidden md:flex space-x-10 text-gray-700 text-xl">
           {navLinks.map((link) => (
             <li key={link.name}>
-              <a href={link.href} className="hover:text-black">
+              <NavLink to={link.href} className="hover:text-black">
                 {link.name}
-              </a>
+              </NavLink>
             </li>
           ))}
         </ul>
@@ -55,12 +56,9 @@ const Navbar = () => {
       {isOpen && (
         <div className="md:hidden mt-4 space-y-4 text-center">
           {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className="block text-gray-700">
+            <NavLink to={link.href} className="block text-gray-700">
               {link.name}
-            </a>
+            </NavLink>
           ))}
           <div className="space-y-2 pt-2">
             <button className="w-full px-4 py-2 border border-[#1E2525] text-[#1E2525] rounded hover:bg-blue-50 transition">
