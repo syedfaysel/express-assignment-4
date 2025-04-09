@@ -13,7 +13,7 @@ const Banner = () => {
         <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 leading-tight">
           All Your Stationery Needs in One Place
         </h1>
-        <p className="text-base sm:text-lg md:text-xl mb-6 leading-relaxed">
+        <p className="text-base sm:text-lg md:text-xl mb-6 leading-relaxed text-gray-200">
           From pens and notebooks to office supplies — find high-quality
           products for school, work, and creativity at affordable prices.
         </p>
