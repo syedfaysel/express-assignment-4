@@ -9,4 +9,5 @@ dotenv.config({
 export default {
   port: process.env.PORT || 3000,
   db_url: process.env.MONGODB_URI,
+  bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
 };
