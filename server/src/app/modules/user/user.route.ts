@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { userController } from './user.controller';
-import { UserValidation } from './userValidation';
+import { UserValidation } from './user.validation';
+import auth from '../../../middlewares/auth';
 
 const userRoute = Router();
 
 userRoute.post(
-  '/create-user',
+  '/create-admin',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       console.log({ body: req.body });
@@ -22,6 +23,8 @@ userRoute.post(
 userRoute.get('/:userId', userController.getSingleUser);
 userRoute.put('/:userId', userController.updateUser);
 userRoute.delete('/:userId', userController.deleteUser);
-userRoute.get('/', userController.getUser);
+//authorization example
+
+userRoute.get('/', auth('admin', 'user'), userController.getUser);
 
 export default userRoute;
