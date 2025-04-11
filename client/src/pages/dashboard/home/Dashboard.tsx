@@ -42,7 +42,7 @@ const Dashboard = () => {
   }
   return (
     <div>
-      <div className="flex h-screen">
+      <div className="flex min-h-screen">
         {/* Sidebar */}
         <div
           className={`fixed inset-y-0 left-0 bg-gray-900 text-white w-64 p-5 transform ${

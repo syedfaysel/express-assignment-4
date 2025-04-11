@@ -4,6 +4,7 @@ import ProtectedRoute from "@/layout/ProtectedRoute";
 import AllProducts from "@/pages/allProducts/allProducts/AllProducts";
 import Login from "@/pages/auth/Login";
 import SignUp from "@/pages/auth/SignUp";
+import Cart from "@/pages/cart/Cart";
 import Dashboard from "@/pages/dashboard/home/Dashboard";
 import DashboardHome from "@/pages/dashboard/home/DashboardHome";
 import ManageOrder from "@/pages/dashboard/order/ManageOrder";
@@ -34,11 +35,16 @@ const router = createBrowserRouter([
         path: "/login",
         element: <Login></Login>,
       },
+      {
+        path: "/cart",
+        element: <Cart/>,
+      },
     ],
   },
   {
     path: "/dashboard",
     element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
+    // element: <Dashboard />,
     children: [
       {
         path: "/dashboard",
@@ -56,6 +62,7 @@ const router = createBrowserRouter([
         path: "/dashboard/manage-orders",
         element: <ManageOrder />,
       },
+      
     ],
   },
 ]);
