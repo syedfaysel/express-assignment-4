@@ -6,8 +6,8 @@ import { FaUser } from "react-icons/fa";
 import { MdProductionQuantityLimits } from "react-icons/md";
 import { FaCartArrowDown } from "react-icons/fa";
 import { LuLogOut } from "react-icons/lu";
-import { logoutUser } from "@/redux/features/auth/authSlice";
-import { useAppDispatch } from "@/redux/hooks";
+import { logoutUser, selectUser } from "@/redux/features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { toast } from "sonner";
 
 const menuItems = [
@@ -25,7 +25,17 @@ const menuItems = [
   },
 ];
 
+const userMenuItems = [
+  { name: "Profile", path: "/dashboard/profile", icon: <FaUser /> },
+  { name: "Settings", path: "/dashboard/settings", icon: <FaUser /> },
+  { name: "View Orders", path: "/dashboard/view-orders", icon: <FaUser /> },
+  
+]
+
 const Dashboard = () => {
+  const user = useAppSelector(selectUser);
+  const isAdmin = user?.role === "admin";
+  const sidebarMenuItems = isAdmin ? menuItems : userMenuItems;
   const dispatch = useAppDispatch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -63,7 +73,7 @@ const Dashboard = () => {
 
           <nav>
             <ul>
-              {menuItems.map((item) => (
+              {sidebarMenuItems.map((item) => (
                 <li key={item.path}>
                   <NavLink
                     to={item.path}

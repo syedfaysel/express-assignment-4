@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react"; // Icon library, install via `npm install lucide-react`
 import logo from "../assets/store-logo.png";
 import { NavLink } from "react-router-dom";
+import { useAppSelector } from "@/redux/hooks";
+import { selectToken } from "@/redux/features/auth/authSlice";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -11,6 +13,8 @@ const navLinks = [
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const isLoggedIn = useAppSelector(selectToken);
+  console.log(isLoggedIn);
 
   return (
     <nav className="px-6 py-2 font-[space-grotesk] bg-[#FAF7F0]">
@@ -40,18 +44,26 @@ const Navbar = () => {
         </ul>
 
         {/* Auth Buttons */}
-        <div className="hidden md:flex space-x-4">
-          <NavLink to="/login">
-            <button className="px-4 py-2 border border-[#1E2525] text-[blue-600] rounded hover:bg-blue-50 transition cursor-pointer">
-              Login
+        {isLoggedIn ? (
+          <NavLink to="/dashboard">
+            <button className="hidden md:block px-4 py-2 bg-[#1E2525] text-white rounded hover:bg-[#1E2525] transition cursor-pointer">
+              Dashboard
             </button>
           </NavLink>
-          <NavLink to="/signup">
-            <button className="px-4 py-2 bg-[#1E2525] text-white rounded hover:bg-[#1E2525] transition cursor-pointer">
-              Sign Up
-            </button>
-          </NavLink>
-        </div>
+        ) : (
+          <div className="hidden md:flex space-x-4">
+            <NavLink to="/login">
+              <button className="px-4 py-2 border border-[#1E2525] text-[blue-600] rounded hover:bg-blue-50 transition cursor-pointer">
+                Login
+              </button>
+            </NavLink>
+            <NavLink to="/signup">
+              <button className="px-4 py-2 bg-[#1E2525] text-white rounded hover:bg-[#1E2525] transition cursor-pointer">
+                Sign Up
+              </button>
+            </NavLink>
+          </div>
+        )}
 
         {/* Mobile Menu Button */}
         <button
@@ -73,18 +85,27 @@ const Navbar = () => {
               {link.name}
             </NavLink>
           ))}
-          <div className="space-y-2 pt-2">
-            <NavLink to="/login">
-              <button className="w-full px-4 py-2 border border-[#1E2525] text-[#1E2525] rounded hover:bg-blue-50 transition">
-                Login
+
+          {isLoggedIn ? (
+            <NavLink to="/dashboard">
+              <button className="w-full px-4 py-2 bg-[#1E2525] text-white rounded hover:bg-[#1E2525] transition cursor-pointer">
+                Dashboard
               </button>
             </NavLink>
-            <NavLink to="/signup">
-              <button className="w-full px-4 py-2 bg-[#1E2525] text-white rounded hover:bg-[#1E2525] transition">
-                Sign Up
-              </button>
-            </NavLink>
-          </div>
+          ) : (
+            <div className="space-y-2 pt-2">
+              <NavLink to="/login">
+                <button className="w-full px-4 py-2 border border-[#1E2525] text-[#1E2525] rounded hover:bg-blue-50 transition">
+                  Login
+                </button>
+              </NavLink>
+              <NavLink to="/signup">
+                <button className="w-full px-4 py-2 bg-[#1E2525] text-white rounded hover:bg-[#1E2525] transition">
+                  Sign Up
+                </button>
+              </NavLink>
+            </div>
+          )}
         </div>
       )}
     </nav>
