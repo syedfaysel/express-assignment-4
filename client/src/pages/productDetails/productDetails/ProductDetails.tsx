@@ -17,15 +17,13 @@ const ProductDetails = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 font-[josefin-sans]">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-
         <div>
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-[400px] object-cover rounded-lg shadow"
+            className="w-full max-h-[500px] rounded-lg shadow"
           />
         </div>
-
 
         <div className="space-y-5">
           <h2 className="text-3xl font-bold text-gray-800">{product.name}</h2>
@@ -33,16 +31,18 @@ const ProductDetails = () => {
 
           <div className="text-lg text-gray-700">
             <p>
-              <strong>Price:</strong> ${product.price}
+              <span className="font-extrabold">Price:</span> ${product.price}
             </p>
             <p>
-              <strong>Category:</strong> {product.category}
+              <span className="font-extrabold">Category:</span>{" "}
+              {product.category}
             </p>
             <p>
-              <strong>Author/Brand:</strong> {product.author}
+              <span className="font-extrabold">Author/Brand:</span>{" "}
+              {product.author}
             </p>
             <p>
-              <strong>Availability:</strong>{" "}
+              <span className="font-extrabold">Availability:</span>{" "}
               <span
                 className={
                   product.available ? "text-green-600" : "text-red-600"
