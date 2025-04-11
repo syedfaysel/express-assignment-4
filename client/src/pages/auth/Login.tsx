@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useLoginMutation } from "@/redux/features/auth/authApi";
 import { useAppDispatch } from "@/redux/hooks";
-import { setUser } from "@/redux/features/auth/authSlice";
+import { setUser, TAuthUser } from "@/redux/features/auth/authSlice";
 import { verifyToken } from "@/utils/verifyToken";
 import { toast } from "sonner";
 
@@ -27,7 +27,7 @@ const Login = () => {
         password: data.password,
       };
       const res = await login(userInfo).unwrap();
-      const user = verifyToken(res.token);
+      const user = verifyToken(res.token) as TAuthUser;
       dispatch(setUser({ user: user, token: res.token }));
 
       toast.success("Logged in successful", { id: toastId });
