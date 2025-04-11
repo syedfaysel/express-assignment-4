@@ -1,14 +1,49 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useLoginMutation } from "@/redux/features/auth/authApi";
+import { useAppDispatch } from "@/redux/hooks";
+import { setUser } from "@/redux/features/auth/authSlice";
+import { verifyToken } from "@/utils/verifyToken";
+import { toast } from "sonner";
 
 type Inputs = {
   email: string;
   password: string;
 };
+
 const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { register, handleSubmit } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const [login] = useLoginMutation();
+
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const toastId = toast.loading("Logging in...");
+
+    try {
+      const userInfo = {
+        email: data.email,
+        password: data.password,
+      };
+      const res = await login(userInfo).unwrap();
+      const user = verifyToken(res.token);
+      dispatch(setUser({ user: user, token: res.token }));
+
+      toast.success("Logged in successful", { id: toastId });
+      if (user?.role === "admin") {
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      toast.error("Something went wrong, please try again later.", {
+        id: toastId,
+      });
+      console.error("Login error:", err);
+      return;
+    }
+  };
 
   return (
     <div className="py-14">
@@ -23,7 +58,10 @@ const Login = () => {
           </p>
         </div>
         <div className="mt-12 max-w-lg mx-auto">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-5"
+          >
             <div>
               <label className="font-medium">Email</label>
               <input
@@ -46,6 +84,13 @@ const Login = () => {
               />
             </div>
 
+            <button
+              type="submit"
+              className="w-full px-4 py-2 text-white font-medium bg-black hover:bg-gray-700 active:bg-gray-700 rounded-lg duration-150"
+            >
+              Login
+            </button>
+
             <div>
               <p className="w-full mt-2 font-medium">
                 Don't Have an Account?
@@ -54,13 +99,6 @@ const Login = () => {
                 </span>
               </p>
             </div>
-
-            <button
-              type="submit"
-              className="w-full px-4 py-2 text-white font-medium bg-black hover:bg-gray-700 active:bg-gray-700 rounded-lg duration-150"
-            >
-              Submit
-            </button>
           </form>
         </div>
       </div>

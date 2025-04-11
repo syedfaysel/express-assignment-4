@@ -6,6 +6,9 @@ import { FaUser } from "react-icons/fa";
 import { MdProductionQuantityLimits } from "react-icons/md";
 import { FaCartArrowDown } from "react-icons/fa";
 import { LuLogOut } from "react-icons/lu";
+import { logoutUser } from "@/redux/features/auth/authSlice";
+import { useAppDispatch } from "@/redux/hooks";
+import { toast } from "sonner";
 
 const menuItems = [
   { name: "Dashboard", path: "/dashboard", icon: <MdDashboard /> },
@@ -23,7 +26,20 @@ const menuItems = [
 ];
 
 const Dashboard = () => {
+  const dispatch = useAppDispatch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleLogout = () => {
+    const toastId =  toast.loading("Logging out...")
+    try {
+      dispatch(logoutUser());
+      toast.success("Logout successful!", { id: toastId });
+
+    } catch (error) {
+      toast.error("Logout failed!", { id: toastId });
+      console.error("Logout failed:", error);
+    }
+  }
   return (
     <div>
       <div className="flex h-screen">
@@ -65,7 +81,10 @@ const Dashboard = () => {
                   </NavLink>
                 </li>
               ))}
-              <li className="flex items-center gap-2 py-2 px-3 cursor-pointer hover:bg-gray-700">
+              <li
+                className="flex items-center gap-2 py-2 px-3 cursor-pointer hover:bg-gray-700"
+                onClick={handleLogout}
+              >
                 <LuLogOut />
                 Logout
               </li>
@@ -84,7 +103,10 @@ const Dashboard = () => {
             </button>
             {/* ===================== Dashboard avater start =================== */}
             {/* <h2 className="text-xl font-semibold ml-auto">Dashboard</h2> */}
-            <UserCircle size={32} className="ml-auto text-gray-700" />
+            <UserCircle
+              size={32}
+              className="ml-auto text-gray-700"
+            />
             {/* ===================== Dashboard avater end =================== */}
           </header>
           {/* ========== Main Content Start Here ============ */}

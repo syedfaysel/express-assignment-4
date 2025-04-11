@@ -1,4 +1,6 @@
+import ErrorPage from "@/components/ErrorPage";
 import Main from "@/layout/Main";
+import ProtectedRoute from "@/layout/ProtectedRoute";
 import AllProducts from "@/pages/allProducts/allProducts/AllProducts";
 import Login from "@/pages/auth/Login";
 import SignUp from "@/pages/auth/SignUp";
@@ -14,6 +16,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Main></Main>,
+    errorElement: <ErrorPage/>,
     children: [
       {
         path: "/",
@@ -35,7 +38,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <Dashboard />,
+    element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
     children: [
       {
         path: "/dashboard",

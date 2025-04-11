@@ -1,5 +1,7 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { toast } from "sonner";
+import { useRegisterMutation } from "@/redux/features/auth/authApi";
 
 type Inputs = {
   name: string;
@@ -9,8 +11,33 @@ type Inputs = {
 
 const SignUp = () => {
   const { register, handleSubmit } = useForm<Inputs>();
+  const navigate = useNavigate();
+  const [registerUser, { error }] = useRegisterMutation();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const toastId = toast.loading("Creating account...");
+
+    try {
+      const userInfo = {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      };
+      const res = await registerUser(userInfo).unwrap();
+      console.log(res);
+      toast.success("Account created successfully!", { id: toastId });
+      toast.info("Redirecting to login page");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+    } catch (err) {
+      toast.error("Something went wrong, please try again later.", {
+        id: toastId,
+      });
+      console.error("User registration error:", err);
+      return;
+    }
+  };
   return (
     <div className="py-14">
       <div className="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8">
@@ -23,7 +50,10 @@ const SignUp = () => {
           </p>
         </div>
         <div className="mt-12 max-w-lg mx-auto">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-5"
+          >
             <div>
               <label className="font-medium">Full Name</label>
               <input
@@ -55,6 +85,12 @@ const SignUp = () => {
               />
             </div>
 
+            <button
+              type="submit"
+              className="w-full px-4 py-2 text-white font-medium bg-black hover:bg-gray-700 active:bg-gray-700 rounded-lg duration-150"
+            >
+              Sign Up
+            </button>
             <div>
               <p className="w-full mt-2 font-medium">
                 Already have an account?{" "}
@@ -64,13 +100,6 @@ const SignUp = () => {
                 </span>
               </p>
             </div>
-
-            <button
-              type="submit"
-              className="w-full px-4 py-2 text-white font-medium bg-black hover:bg-gray-700 active:bg-gray-700 rounded-lg duration-150"
-            >
-              Submit
-            </button>
           </form>
         </div>
       </div>
