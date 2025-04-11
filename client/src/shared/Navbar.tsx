@@ -6,8 +6,7 @@ import { NavLink } from "react-router-dom";
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "All Product", href: "/all-products" },
-  { name: "About Us", href: "#pricing" },
-  { name: "Contact", href: "#contact" },
+  { name: "About Us", href: "/about" },
 ];
 
 const Navbar = () => {
@@ -16,7 +15,6 @@ const Navbar = () => {
   return (
     <nav className="px-6 py-2 font-[space-grotesk] bg-[#FAF7F0]">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* Logo */}
         <div className="text-2xl font-bold">
           <NavLink to="/">
             <img

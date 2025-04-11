@@ -2,6 +2,7 @@ import ErrorPage from "@/components/ErrorPage";
 import Main from "@/layout/Main";
 import ProtectedRoute from "@/layout/ProtectedRoute";
 import AllProducts from "@/pages/allProducts/allProducts/AllProducts";
+import About from "@/pages/about/about/About";
 import Login from "@/pages/auth/Login";
 import SignUp from "@/pages/auth/SignUp";
 import Dashboard from "@/pages/dashboard/home/Dashboard";
@@ -10,6 +11,7 @@ import ManageOrder from "@/pages/dashboard/order/ManageOrder";
 import ManageProducts from "@/pages/dashboard/product/ManageProducts";
 import ManageUsers from "@/pages/dashboard/user/ManageUsers";
 import Home from "@/pages/home/home/Home";
+import ProductDetails from "@/pages/productDetails/productDetails/ProductDetails";
 import { createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -25,6 +27,14 @@ const router = createBrowserRouter([
       {
         path: "/all-products",
         element: <AllProducts></AllProducts>,
+      },
+      {
+        path: "/all-products/:productId",
+        element: <ProductDetails></ProductDetails>,
+      },
+      {
+        path: "/about",
+        element: <About></About>,
       },
       {
         path: "/signup",
