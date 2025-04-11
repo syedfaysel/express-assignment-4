@@ -19,10 +19,10 @@ const PaymentPost = async (req: Request, res: Response) => {
     total_amount: requestedData.price,
     currency: 'BDT',
     tran_id: transaction_id, // use unique tran_id for each api call
-    success_url: `http://localhost:3000/api/v1/ssl/payment/success/${transaction_id}`,
-    fail_url: 'http://localhost:3030/fail',
-    cancel_url: 'http://localhost:3030/cancel',
-    ipn_url: 'http://localhost:3030/ipn',
+    success_url: `${config.server_url}/api/v1/ssl/payment/success/${transaction_id}`,
+    fail_url: `${config.server_url}/fail`,
+    cancel_url: `${config.server_url}/cancel`,
+    ipn_url: `${config.server_url}/ipn`,
     shipping_method: 'Courier',
     product_name: 'Computer.',
     product_category: 'Electronic',
@@ -73,7 +73,7 @@ const updatePayment = async (req: Request, res: Response) => {
   console.log(result);
 
   if (result.modifiedCount > 0) {
-    res.redirect(`http://localhost:5173/api/v1/ssl/payment/success/${transaction_id}`);
+    res.redirect(`${config.client_url}/api/v1/ssl/payment/success/${transaction_id}`);
   }
 };
 
