@@ -1,11 +1,16 @@
 export interface IProduct {
-  productId: string;
+  _id?: string;
   name: string;
   price: number;
   description: string;
   category: string;
   stock: number;
-  imageUrl: string;
+  brand?: string;
+  colors?: string[];
+  sizes?: string[];
+  images?: string[];
+  tags?: string[];
+  isFeatured?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

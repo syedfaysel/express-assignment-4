@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { productServices } from './product.service';
+import { IProduct } from './product.interface';
 
 const addNewProduct = async (req: Request, res: Response) => {
   try {
-    const product = req.body;
+    const product: IProduct = req.body;
     const result = await productServices.addProductIntoDB(product);
 
     res.status(200).json({
@@ -19,6 +20,7 @@ const addNewProduct = async (req: Request, res: Response) => {
 const getAllProducts = async (req: Request, res: Response) => {
   try {
     const result = await productServices.getAllProductsFromDB();
+    console.log(result);
 
     res.status(200).json({
       success: true,
