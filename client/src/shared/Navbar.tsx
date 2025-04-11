@@ -18,9 +18,9 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <div className="text-2xl font-bold">
-          <a href="/">
+          <NavLink to="/login">
             <img className="w-16" src={logo} alt="" />
-          </a>
+          </NavLink>
         </div>
 
         {/* Desktop Nav */}
