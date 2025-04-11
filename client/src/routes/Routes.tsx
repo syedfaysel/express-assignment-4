@@ -12,6 +12,10 @@ import ManageProducts from "@/pages/dashboard/product/ManageProducts";
 import ManageUsers from "@/pages/dashboard/user/ManageUsers";
 import Home from "@/pages/home/home/Home";
 import ProductDetails from "@/pages/productDetails/productDetails/ProductDetails";
+import Payment from "@/pages/payment/payment";
+import PaymentSuccess from "@/pages/payment/paymentSuccess";
+
+
 import { createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -35,6 +39,14 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <About></About>,
+      },
+      {
+        path: "/payment_page",
+        element: <Payment/>,
+      },
+      {
+        path: "/api/v1/ssl/payment/success/:tranid",
+        element: <PaymentSuccess/>,
       },
       {
         path: "/signup",

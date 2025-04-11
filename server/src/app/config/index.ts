@@ -13,4 +13,6 @@ export default {
   client_url: process.env.CLIENT_URL,
   jwt_secret: process.env.JWT_SECRET,
   jwt_expires_in: process.env.JWT_EXPIRES_IN,
+  ssl_store_id: process.env.PAYMENT_STORE_ID,
+  ssl_store_password: process.env.PAYMENT_STORE_PASSWORD,
 };
