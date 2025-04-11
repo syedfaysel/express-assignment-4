@@ -8,6 +8,7 @@ import ManageOrder from "@/pages/dashboard/order/ManageOrder";
 import ManageProducts from "@/pages/dashboard/product/ManageProducts";
 import ManageUsers from "@/pages/dashboard/user/ManageUsers";
 import Home from "@/pages/home/home/Home";
+import ProductDetails from "@/pages/productDetails/productDetails/ProductDetails";
 import { createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: "/all-products",
         element: <AllProducts></AllProducts>,
+      },
+      {
+        path: "/all-products/:productId",
+        element: <ProductDetails></ProductDetails>,
       },
       {
         path: "/signup",

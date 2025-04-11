@@ -1,3 +1,5 @@
+import { NavLink } from "react-router-dom";
+
 const products = [
   {
     id: "1",
@@ -71,7 +73,7 @@ const FeaturedProducts = () => {
         </div>
         <div className="flex justify-center mt-6">
           <button className="px-4 py-2 bg-[#1E2525] text-white rounded hover:bg-[#1E2525] transition">
-            all products
+            <NavLink to={"/all-products"}>all products</NavLink>
           </button>
         </div>
       </div>
