@@ -12,7 +12,13 @@ import ManageProducts from "@/pages/dashboard/product/ManageProducts";
 import ManageUsers from "@/pages/dashboard/user/ManageUsers";
 import Home from "@/pages/home/home/Home";
 import ProductDetails from "@/pages/productDetails/productDetails/ProductDetails";
+import Payment from "@/pages/payment/Payment";
+import PaymentSuccess from "@/pages/payment/PaymentSuccess";
+
+
 import { createBrowserRouter } from "react-router-dom";
+import Cart from "@/pages/cart/cart";
+import Checkout from "@/pages/cart/checkOut";
 
 const router = createBrowserRouter([
   {
@@ -25,16 +31,24 @@ const router = createBrowserRouter([
         element: <Home></Home>,
       },
       {
-        path: "/all-products",
+        path: "/products",
         element: <AllProducts></AllProducts>,
       },
       {
-        path: "/all-products/:productId",
+        path: "/products/:productId",
         element: <ProductDetails></ProductDetails>,
       },
       {
         path: "/about",
         element: <About></About>,
+      },
+      {
+        path: "/payment_page",
+        element: <Payment/>,
+      },
+      {
+        path: "/api/v1/ssl/payment/success/:tranid",
+        element: <PaymentSuccess/>,
       },
       {
         path: "/signup",
@@ -44,6 +58,16 @@ const router = createBrowserRouter([
         path: "/login",
         element: <Login></Login>,
       },
+
+      // private routes in main
+      {
+        path: "/cart",
+        element: <ProtectedRoute><Cart/></ProtectedRoute>,
+      },
+      {
+        path: "/checkout",
+        element: <ProtectedRoute><Checkout/></ProtectedRoute>,
+      }
     ],
   },
   {
