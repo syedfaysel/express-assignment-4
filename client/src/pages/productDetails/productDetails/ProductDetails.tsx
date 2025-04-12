@@ -1,25 +1,66 @@
-const product = {
-  id: 108,
-  name: "Eraser Pack (4 Pcs)",
-  description: "Non-smudging erasers perfect for school use.",
-  price: 2,
-  category: "School Supplies",
-  author: "Nataraj",
-  available: true,
-  image:
-    "https://papier.imgix.net/https%3A%2F%2Fpapier.imgix.net%2Fhttps%253A%252F%252Fd1o785do8fyxgx.cloudfront.net%252Fstock_item%252Fstock_item_images%252Fimages%252F000%252F001%252F351%252Foriginal%252FEMP_FINELINERS_SET_4_ECOMM.jpeg%253F1705936360%3Fixlib%3Drb-3.2.1%26auto%3Dformat%252Ccompress%26s%3D3559b2a80a0bf601f743110c2b8e28fd?ixlib=rb-3.2.1&w=408&auto=format%2Ccompress&s=ec59d82b4afc835a97caca20f9893143",
-};
+import { useState } from "react";
+import { useAppDispatch } from "@/redux/hooks";
+import { addToCart } from "@/redux/features/cart/cartSlice";
+import { toast } from "sonner";
+import { useParams } from "react-router-dom";
+import { useGetSingleProductQuery } from "@/redux/features/proudct/productApi";
+import { productDto } from "@/dto/productDto";
+
 
 const ProductDetails = () => {
-  const handleAddToCart = () => {
-    alert(`${product.name} added to cart!`);
+  const { productId } = useParams<{ productId: string }>();
+  const dispatch = useAppDispatch();
+
+  const [selectedSize, setSelectedSize] = useState<string | undefined>();
+  const [selectedColor, setSelectedColor] = useState<string | undefined>();
+  const [quantity, setQuantity] = useState<number>(1);
+  const [showError, setShowError] = useState<boolean>(false);
+
+  const { data, isError, isLoading } = useGetSingleProductQuery({ productId });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error loading product</div>;
+
+  const product: productDto = data?.data;
+
+  const notify = () => {
+    toast.success("Item added to cart!");
   };
+
+  const handleAddToCart = () => {
+    if (
+      (product.sizes  && !selectedSize) ||
+      (product.colors && !selectedColor)
+    ) {
+      setShowError(true);
+      document.getElementById("sizesGrid")?.scrollIntoView({
+        block: "center",
+        behavior: "smooth",
+      });
+    }
+
+    setShowError(false);
+
+    const cartItem = {
+      productId: product._id!,
+      name: product.name,
+      image: product.images[0],
+      selectedSize,
+      selectedColor,
+      oneQuantityPrice: product.price,
+    };
+
+    dispatch(addToCart(cartItem));
+    console.log("something wrong", cartItem);
+    notify();
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 font-[josefin-sans]">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div>
           <img
-            src={product.image}
+            src={product.images[0]}
             alt={product.name}
             className="w-full max-h-[500px] rounded-lg shadow"
           />
@@ -39,28 +80,89 @@ const ProductDetails = () => {
             </p>
             <p>
               <span className="font-extrabold">Author/Brand:</span>{" "}
-              {product.author}
+              {product.brand}
             </p>
             <p>
               <span className="font-extrabold">Availability:</span>{" "}
               <span
                 className={
-                  product.available ? "text-green-600" : "text-red-600"
-                }>
-                {product.available ? "In Stock" : "Out of Stock"}
+                  product.stock > 0 ? "text-green-600" : "text-red-600"
+                }
+              >
+                {product.stock > 0 ? "In Stock" : "Out of Stock"}
               </span>
             </p>
           </div>
 
+          <div
+            id="sizesGrid"
+            className="flex gap-4"
+          >
+            <select
+              onChange={(e) => setSelectedSize(e.target.value)}
+              defaultValue=""
+              className="border px-3 py-1 rounded"
+            >
+              <option
+                value=""
+                disabled
+              >
+                Select Size
+              </option>
+              {product.sizes?.map((size) => (
+                <option
+                  key={size}
+                  value={size}
+                >
+                  {size}
+                </option>
+              ))}
+            </select>
+
+            <select
+              onChange={(e) => setSelectedColor(e.target.value)}
+              defaultValue=""
+              className="border px-3 py-1 rounded"
+            >
+              <option
+                value=""
+                disabled
+              >
+                Select Color
+              </option>
+              {product.colors?.map((color) => (
+                <option
+                  key={color}
+                  value={color}
+                >
+                  {color}
+                </option>
+              ))}
+            </select>
+
+            <input
+              type="number"
+              min={1}
+              value={quantity}
+              onChange={(e) => setQuantity(parseInt(e.target.value))}
+              className="w-16 border px-2 py-1 rounded"
+            />
+          </div>
+
+          {showError && (
+            <p className="text-red-600 text-sm">Please select size and color</p>
+          )}
+
           <button
             onClick={handleAddToCart}
-            disabled={!product.available}
+            disabled={product.stock === 0}
             className={`px-6 py-3 text-white font-medium rounded transition ${
-              product.available
+              product.stock > 0
                 ? "bg-[#1E2525] hover:bg-[#1E2525]"
                 : "bg-gray-400 cursor-not-allowed"
-            }`}>
-            {product.available ? "Add to Cart" : "Unavailable"}
+            }`}
+          >
+            {product.stock ? "Add to Cart" : "Unavailable"}
           </button>
         </div>
       </div>

@@ -10,7 +10,7 @@ const Payment = () => {
   
       console.log(userName, email, phone, address,);
   
-      await fetch("http://localhost:3000/api/v1/ssl", {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/ssl`, {
         method: "POST",
         credentials: "include",
         headers: {

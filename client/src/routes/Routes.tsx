@@ -12,11 +12,13 @@ import ManageProducts from "@/pages/dashboard/product/ManageProducts";
 import ManageUsers from "@/pages/dashboard/user/ManageUsers";
 import Home from "@/pages/home/home/Home";
 import ProductDetails from "@/pages/productDetails/productDetails/ProductDetails";
-import Payment from "@/pages/payment/payment";
-import PaymentSuccess from "@/pages/payment/paymentSuccess";
+import Payment from "@/pages/payment/Payment";
+import PaymentSuccess from "@/pages/payment/PaymentSuccess";
 
 
 import { createBrowserRouter } from "react-router-dom";
+import Cart from "@/pages/cart/cart";
+import Checkout from "@/pages/cart/checkOut";
 
 const router = createBrowserRouter([
   {
@@ -29,11 +31,11 @@ const router = createBrowserRouter([
         element: <Home></Home>,
       },
       {
-        path: "/all-products",
+        path: "/products",
         element: <AllProducts></AllProducts>,
       },
       {
-        path: "/all-products/:productId",
+        path: "/products/:productId",
         element: <ProductDetails></ProductDetails>,
       },
       {
@@ -56,6 +58,16 @@ const router = createBrowserRouter([
         path: "/login",
         element: <Login></Login>,
       },
+
+      // private routes in main
+      {
+        path: "/cart",
+        element: <ProtectedRoute><Cart/></ProtectedRoute>,
+      },
+      {
+        path: "/checkout",
+        element: <ProtectedRoute><Checkout/></ProtectedRoute>,
+      }
     ],
   },
   {
