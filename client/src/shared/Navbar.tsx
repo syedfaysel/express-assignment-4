@@ -4,17 +4,17 @@ import logo from "../assets/store-logo.png";
 import { NavLink } from "react-router-dom";
 import { useAppSelector } from "@/redux/hooks";
 import { selectToken } from "@/redux/features/auth/authSlice";
+import CartOnHeader from "./CartOnHeader";
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "All Product", href: "/all-products" },
+  { name: "All Product", href: "/products" },
   { name: "About Us", href: "/about" },
 ];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const isLoggedIn = useAppSelector(selectToken);
-  console.log(isLoggedIn);
 
   return (
     <nav className="px-6 py-2 font-[space-grotesk] bg-[#FAF7F0]">
@@ -45,11 +45,15 @@ const Navbar = () => {
 
         {/* Auth Buttons */}
         {isLoggedIn ? (
-          <NavLink to="/dashboard">
-            <button className="hidden md:block px-4 py-2 bg-[#1E2525] text-white rounded hover:bg-[#1E2525] transition cursor-pointer">
-              Dashboard
-            </button>
-          </NavLink>
+          <div className="hidden md:flex space-x-4 items-center">
+
+            <NavLink to="/dashboard">
+              <button className="hidden md:block px-4 py-2 bg-[#1E2525] text-white rounded hover:bg-[#1E2525] transition cursor-pointer">
+                Dashboard
+              </button>
+            </NavLink>
+            <CartOnHeader />
+          </div>
         ) : (
           <div className="hidden md:flex space-x-4">
             <NavLink to="/login">
@@ -64,6 +68,7 @@ const Navbar = () => {
             </NavLink>
           </div>
         )}
+
 
         {/* Mobile Menu Button */}
         <button
