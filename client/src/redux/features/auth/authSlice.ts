@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export type TAuthUser = {
+  id: string;
+  name: string;
   email: string;
   role: string;
   iat: number;
