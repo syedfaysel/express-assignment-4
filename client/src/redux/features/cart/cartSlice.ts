@@ -5,8 +5,8 @@ export type TCartItem = {
   productId: string;
   name: string;
   image: string;
-  selectedSize?: string;
-  selectedColor?: string;
+  selectedSize?: string | null;
+  selectedColor?: string | null;
   oneQuantityPrice: number; // Price per unit
   quantity: number;
   price: number; // oneQuantityPrice * quantity

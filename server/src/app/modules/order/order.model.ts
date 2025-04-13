@@ -83,9 +83,9 @@ const OrderSchema = new Schema<IOrder & Document>(
     deliveryService: {
       type: String,
     },
-    paymentId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Payment',
+    transactionId: {
+      type: String,
+      unique: true,
     },
     isPaid: {
       type: Boolean,

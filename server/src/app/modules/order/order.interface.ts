@@ -15,12 +15,12 @@ export interface IOrder {
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   trackingNumber: string | null;
   deliveryService?: string;
-  paymentId?: Types.ObjectId;
+  transactionId: string;
 
   isPaid?: boolean;
   deliveredAt?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface IOrderItem {

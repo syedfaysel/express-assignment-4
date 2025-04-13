@@ -20,8 +20,6 @@ const addNewProduct = async (req: Request, res: Response) => {
 const getAllProducts = async (req: Request, res: Response) => {
   try {
     const result = await productServices.getAllProductsFromDB();
-    console.log(result);
-
     res.status(200).json({
       success: true,
       message: 'Products fetched successfully',
@@ -29,6 +27,10 @@ const getAllProducts = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log('Error in getAllProducts:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
   }
 };
 
@@ -44,6 +46,10 @@ const getProductById = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log('Error in getProductById:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
   }
 };
 
@@ -67,6 +73,10 @@ const updateProductById = async (req: Request, res: Response): Promise<any> => {
     });
   } catch (error) {
     console.log('Error in updating product:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
   }
 };
 const updateProduct = async (req: Request, res: Response): Promise<any | void> => {
@@ -90,6 +100,10 @@ const updateProduct = async (req: Request, res: Response): Promise<any | void> =
     });
   } catch (error) {
     console.log('Error in updateProduct:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
   }
 };
 

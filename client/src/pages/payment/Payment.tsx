@@ -1,43 +1,62 @@
+import { Button } from "@/components/ui/button";
+
 const Payment = () => {
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      const form = event.target as HTMLFormElement;
-  
-      const userName = form.username.value;
-      const email = form.email.value;
-      const phone = form.phone.value;
-      const address = form.address.value;
-  
-      console.log(userName, email, phone, address,);
-  
-      await fetch(`${import.meta.env.VITE_API_URL}/api/v1/ssl`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
+  const handleOrder = async () => {
+    const order = {
+      userId: "67fa9bfabcea91d0a2c2753e",
+      products: [
+        {
+          productId: "67f92f5340cfe361a5e92f9a",
+          quantity: 2,
+          price: 500,
+          name: "Stylish Notebook",
+          image: "https://example.com/images/notebook.jpg",
+          color: "Blue",
+          size: "A5",
         },
-        body: JSON.stringify({
-          userName,
-          price:3000,
-          email,
-          phone,
-          address,
-        }),
-      })
-        .then((res) => res.json())
-        .then((result) => {
-          window.location.replace(result.url)
-          console.log(result);
-        });
+      ],
+      totalAmount: 2200,
+      shippingCost: 100,
+      shippingAddress: {
+        street: "123 Stationery Lane",
+        city: "Dhaka",
+        postalCode: "1207",
+        country: "Bangladesh",
+      },
+      contactPhone: "+8801234567890",
+      customerNote: "Please deliver between 9AM to 5PM.",
+      couponCode: "NEWCUSTOMER10",
+      status: "pending",
+      trackingNumber: null,
+      deliveryService: "Pathao",
+      // transactionId: "txn_20250413_ABC123XYZ",
+      // isPaid: true
     };
-  
-    return (
-      <div className="">
-        <h1 className="text-2xl text-center font-bold">
-          submit required information for completing the payment
-        </h1>
-  
-        <div className="my-16">
+
+
+    await fetch(`${import.meta.env.VITE_API_URL}/api/v1/orders`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(order),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        // Redirect to the payment page
+        window.location.replace(result.url);
+      });
+  };
+
+  return (
+    <div className="">
+      <h1 className="text-2xl text-center font-bold">
+        submit required information for completing the payment
+      </h1>
+
+      {/* <div className="my-16">
           <p className="text-center font-black text-3xl">payment form</p>
           <div className="w-full   flex justify-center items-center">
             <form onSubmit={handleSubmit} className="w-11/12 lg:w-6/12  ">
@@ -93,10 +112,16 @@ const Payment = () => {
               </button>
             </form>
           </div>
-        </div>
-      </div>
-    );
-  };
-  
-  export default Payment;
-  
+        </div> */}
+
+      <Button
+        className=""
+        onClick={handleOrder}
+      >
+        Place Order
+      </Button>
+    </div>
+  );
+};
+
+export default Payment;

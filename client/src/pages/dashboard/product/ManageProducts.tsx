@@ -21,6 +21,7 @@ import { useGetProductsQuery } from "@/redux/features/proudct/productApi";
 
 import EditProductForm from "./EditProductForm";
 import AddProductForm from "./AddProductForm";
+// import ManageTable from "./CustomTable";
 const ManageProducts = () => {
   const {
     data,
@@ -33,7 +34,7 @@ const ManageProducts = () => {
   console.log(data);
 
   return (
-    <div>
+    <div className="p-6 space-y-6">
       <div className="text-center font-bold text-xl py-5">Manage Products</div>
       <div className="flex justify-end items-center mb-4">
         <Dialog>
@@ -51,94 +52,102 @@ const ManageProducts = () => {
             <AddProductForm
               onSubmit={(newProduct) => {
                 console.log("Add product:", newProduct);
-                
-
-
-   
               }}
             />
           </DialogContent>
         </Dialog>
       </div>
-      <div>
-        {products.map((product) => (
-          <Table key={product._id} className="overflow-x-scroll">
-            <TableCaption>A list of your products.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Image</TableHead>
-                <TableHead>name</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Stock</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead className="text-right">Colors</TableHead>
-                <TableHead className="text-right">Sizes</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">
-                  <img className="w-20" src={product.images[0]} alt="" />
-                </TableCell>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.price}</TableCell>
-                <TableCell>{product.description}</TableCell>
-                <TableCell>{product.stock}</TableCell>
-                <TableCell>{product.price}</TableCell>
-                <TableCell className="text-right">
-                  {product.colors?.map((color, index) => {
-                    return (
-                      <span key={index}>
-                        {color}
-                        {index !== (product.colors ?? []).length - 1 && ", "}
-                      </span>
-                    );
-                  })}
-                </TableCell>
-                <TableCell className="text-right">
-                  {product.colors?.map((size, index) => {
-                    return (
-                      <span key={index}>
-                        {size}
-                        {index !== (product.colors ?? []).length - 1 && ", "}
-                      </span>
-                    );
-                  })}
-                </TableCell>
-                <TableCell className="text-right">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline">Edit Product</Button>
-                    </DialogTrigger>
-
-                    <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-6">
-                      <DialogHeader>
-                        <DialogTitle>Edit Product</DialogTitle>
-                        <DialogDescription>
-                          Update your product details below.
-                        </DialogDescription>
-                      </DialogHeader>
-
-                      <EditProductForm
-                        product={product}
-                        onSubmit={(updatedData) => {
-                          console.log("Submit updated product:", updatedData);
-
-                        }}
+      <div className="w-full overflow-x-auto border border-red-500 bg-yellow-50">
+        <div>
+          <div className="min-w-[900px]">
+            <Table>
+              <TableCaption>A list of products.</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Image</TableHead>
+                  <TableHead>name</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Stock</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead className="text-right">Colors</TableHead>
+                  <TableHead className="text-right">Sizes</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {products.map((product) => (
+                  <TableRow key={product._id}>
+                    <TableCell className="font-medium">
+                      <img
+                        className="w-20"
+                        src={product.images[0]}
+                        alt=""
                       />
-                    </DialogContent>
-                  </Dialog>
+                    </TableCell>
+                    <TableCell>{product.name}</TableCell>
+                    <TableCell>{product.price}</TableCell>
+                    <TableCell>{product.description}</TableCell>
+                    <TableCell>{product.stock}</TableCell>
+                    <TableCell>{product.price}</TableCell>
+                    <TableCell className="text-right">
+                      {product.colors?.map((color, index) => {
+                        return (
+                          <span key={index}>
+                            {color}
+                            {index !== (product.colors ?? []).length - 1 &&
+                              ", "}
+                          </span>
+                        );
+                      })}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {product.colors?.map((size, index) => {
+                        return (
+                          <span key={index}>
+                            {size}
+                            {index !== (product.colors ?? []).length - 1 &&
+                              ", "}
+                          </span>
+                        );
+                      })}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline">Edit</Button>
+                        </DialogTrigger>
 
-                  <button className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-200 ml-2 cursor-pointer">
-                    Delete
-                  </button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        ))}
+                        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-6">
+                          <DialogHeader>
+                            <DialogTitle>Edit Product</DialogTitle>
+                            <DialogDescription>
+                              Update your product details below.
+                            </DialogDescription>
+                          </DialogHeader>
+
+                          <EditProductForm
+                            product={product}
+                            onSubmit={(updatedData) => {
+                              console.log(
+                                "Submit updated product:",
+                                updatedData
+                              );
+                            }}
+                          />
+                        </DialogContent>
+                      </Dialog>
+
+                      <button className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-200 ml-2 cursor-pointer">
+                        Delete
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </div>
     </div>
   );

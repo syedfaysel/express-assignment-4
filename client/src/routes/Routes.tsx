@@ -19,6 +19,7 @@ import PaymentSuccess from "@/pages/payment/PaymentSuccess";
 import { createBrowserRouter } from "react-router-dom";
 import Cart from "@/pages/cart/cart";
 import Checkout from "@/pages/cart/checkOut";
+import PaymentFailed from "@/pages/payment/paymentFailed";
 
 const router = createBrowserRouter([
   {
@@ -47,8 +48,12 @@ const router = createBrowserRouter([
         element: <Payment/>,
       },
       {
-        path: "/api/v1/ssl/payment/success/:tranid",
+        path: "/orders/success/:tranid",
         element: <PaymentSuccess/>,
+      },
+      {
+        path: "/orders/fail/:tranid",
+        element: <PaymentFailed/>,
       },
       {
         path: "/signup",
