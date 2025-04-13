@@ -27,7 +27,8 @@ const Login = () => {
         password: data.password,
       };
       const res = await login(userInfo).unwrap();
-      const user = verifyToken(res.token) as TAuthUser;
+      let user = verifyToken(res.token) as TAuthUser;
+      user = {...user, name:res.data.name}
       dispatch(setUser({ user: user, token: res.token }));
 
       toast.success("Logged in successful", { id: toastId });

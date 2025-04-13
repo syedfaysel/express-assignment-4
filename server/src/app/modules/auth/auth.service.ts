@@ -26,7 +26,7 @@ const login = async (payload: ILoginUser) => {
     throw new Error('password does not match');
   }
 
-  const token = jwt.sign({ email: user?.email, role: user?.role }, 'secret', {
+  const token = jwt.sign({ email: user?.email, role: user?.role, id: user?._id }, 'secret', {
     expiresIn: '1d',
   });
 
