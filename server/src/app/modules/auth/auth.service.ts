@@ -35,7 +35,8 @@ const login = async (payload: ILoginUser) => {
     },
   );
 
-  const verifiedUser: Omit<IUser, 'password'> = {
+  const verifiedUser = {
+    id: user?._id,
     name: user?.name,
     age: user?.age,
     email: user?.email,

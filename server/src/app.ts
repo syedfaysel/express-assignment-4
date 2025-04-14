@@ -5,6 +5,8 @@ import authRoute from './app/modules/auth/auth.route';
 import userRoute from './app/modules/user/user.route';
 import config from './app/config';
 import { OrderRoutes } from './app/modules/order/order.routes';
+import globalErrorHandler from './middlewares/globalErrorHandler';
+import notFoundRoute from './middlewares/notFoundRoute';
 const app: Application = express();
 
 // parser and other middlewares
@@ -20,6 +22,8 @@ app.get('/', (req: Request, res: Response) => {
   res.send({ message: 'Hello World!' });
 });
 
-// All application routes
+// global error handler & not found route
+app.use(globalErrorHandler);
+app.use(notFoundRoute);
 
 export default app;
