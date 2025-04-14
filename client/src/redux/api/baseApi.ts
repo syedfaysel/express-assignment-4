@@ -1,6 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 
+export const tagTypes = {
+  userTag: "Users", 
+  orderTag: "Orders",
+  productTag: "Products",
+}
+
 // base api for all endpoints | it remains clean
 export const baseApi = createApi({
   reducerPath: "baseApi",
@@ -15,5 +21,6 @@ export const baseApi = createApi({
       return headers;
     },
   }),
+  tagTypes: [...Object.values(tagTypes)],
   endpoints: () => ({}),
 });

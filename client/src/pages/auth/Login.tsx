@@ -3,8 +3,9 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useLoginMutation } from "@/redux/features/auth/authApi";
 import { useAppDispatch } from "@/redux/hooks";
 import { setUser, TAuthUser } from "@/redux/features/auth/authSlice";
-import { verifyToken } from "@/utils/verifyToken";
+// import { verifyToken } from "@/utils/verifyToken";
 import { toast } from "sonner";
+import { verifyToken } from "@/utils/verifyToken";
 
 type Inputs = {
   email: string;
@@ -27,9 +28,11 @@ const Login = () => {
         password: data.password,
       };
       const res = await login(userInfo).unwrap();
-      let user = verifyToken(res.token) as TAuthUser;
-      user = {...user, name:res.data.name}
-      dispatch(setUser({ user: user, token: res.token }));
+      const isVerified = verifyToken(res.token);
+      const user = res.data as TAuthUser;
+      if (isVerified) {
+        dispatch(setUser({ user: user, token: res.token }));
+      }
 
       toast.success("Logged in successful", { id: toastId });
       if (user?.role === "admin") {
@@ -38,7 +41,7 @@ const Login = () => {
         navigate("/");
       }
     } catch (err) {
-      toast.error("Something went wrong, please try again later.", {
+      toast.error("Ummm! Maybe Invalid Credentials", {
         id: toastId,
       });
       console.error("Login error:", err);

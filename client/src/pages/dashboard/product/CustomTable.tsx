@@ -1,198 +1,146 @@
-import React, { useEffect, useState } from "react";
-import { AgGridReact } from "ag-grid-react";
-import type {
-  ColDef,
-  ICellRendererParams,
-  ValueGetterParams,
-} from "ag-grid-community";
-import { useGetProductsQuery } from "@/redux/features/proudct/productApi";
-import { productDto } from "@/dto/productDto";
-import AddProductForm from "./AddProductForm";
-import { defaultTablePagination } from "@/utils/tablePagination";
+// /**
+//  * v0 by Vercel.
+//  * @see https://v0.dev/t/Kxl3Hj1Fh0x
+//  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
+//  */
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
+// import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationEllipsis, PaginationNext } from "@/components/ui/pagination"
 
-const ManageTable = () => {
-  const {
-    data,
-    isError: isProductsError,
-    isLoading: isProductsLoading,
-    error: productsError,
-  } = useGetProductsQuery({});
-
-  const products = data?.data;
-
-  const [rowData, setRowData] = useState<
-    {
-      name: string;
-      brand: string | null;
-      price: string;
-      category: string;
-      stock: number;
-      isFeatured: boolean;
-      updatedAt: Date;
-      date: Date;
-    }[]
-  >([]);
-
-  // Column Definitions: Defines the columns to be displayed.
-  const columnDefs: ColDef<{
-    name: string;
-    brand: string | null;
-    price: string;
-    category: string;
-    actions: React.ReactNode;
-    index: number;
-    stock: number;
-    isFeatured: boolean;
-    updatedAt: Date;
-    date: Date;
-  }>[] = [
-    {
-      field: "index",
-      headerName: "#",
-      valueGetter: (params) =>
-        params?.node?.rowIndex != null ? params.node.rowIndex + 1 : 0,
-      width: 60,
-      sortable: false,
-    },
-    {
-      field: "name",
-      headerName: "Product Name",
-      sortable: true,
-      filter: true,
-      flex: 1,
-    },
-    {
-      field: "brand",
-      headerName: "Brand",
-      sortable: true,
-      filter: true,
-      flex: 1,
-    },
-    {
-      field: "category",
-      headerName: "Category",
-      filter: true,
-      sortable: true,
-      flex: 1,
-    },
-    {
-      field: "price",
-      headerName: "Price",
-      filter: true,
-      sortable: true,
-      flex: 1,
-    },
-    {
-      field: "date",
-      filter: "agDateColumnFilter",
-      filterParams: {
-        buttons: ["clear", "reset"],
-      },
-      sortable: true,
-      flex: 1,
-    },
-    {
-      headerName: "",
-      field: "actions",
-      flex: 0.4,
-      cellRenderer: (params: ValueGetterParams) => {
-        return params.data ? (
-          <div className="w-3">
-            <button onClick={() => console.log("taking action")} />
-          </div>
-        ) : null;
-      },
-    },
-    {
-      field: "stock",
-      headerName: "Stock",
-      filter: true,
-      sortable: true,
-      flex: 1,
-    },
-    {
-      field: "isFeatured",
-      headerName: "Featured",
-      filter: true,
-      sortable: true,
-      flex: 1,
-    },
-    {
-      field: "updatedAt",
-      headerName: "Updated At",
-      filter: true,
-      sortable: true,
-      flex: 1,
-    },
-  ];
-
-  let content: React.ReactNode;
-  console.log("row data", rowData);
-
-  useEffect(() => {
-    if (products && products.length) {
-      setRowData(
-        products.map((p: productDto) => {
-          return {
-            name: p.name,
-            brand: p.brand,
-            price: p.price,
-            category: p.category,
-            stock: p.stock,
-            isFeatured: p.isFeatured,
-            updatedAt: new Date(p.updatedAt).toLocaleDateString(),
-            date: new Date(
-              new Date(p.createdAt).getFullYear(),
-              new Date(p.createdAt).getMonth(),
-              new Date(p.createdAt).getDate()
-            ),
-          };
-        })
-      );
-    }
-  }, [products]);
-
-  // Show loading states based on the hook status flags
-  if (isProductsLoading) {
-    content = <div>Loading...</div>;
-  } else if (products && products.length) {
-    content = <div>Show All Products</div>;
-  } else if (isProductsError) {
-    content = <div>{productsError?.toString()}</div>;
-  }
-
+export default function CustomTable() {
   return (
-    <div>
-      {/*Head*/}
-      <div className="relative mb-10">
-        <h1 className="text-2xl text-center font-medium">Petty Cash</h1>
-        <div className="top-5 right-10 absolute mb-10">
-          Hi there
-        </div>
-      </div>
-
-      <div className="p-2">
-        <div>
-          <h1 className="text-2xl text-center font-medium">{content}</h1>
-        </div>
-        <AgGridReact
-          rowData={rowData.map((item, index) => ({
-            ...item,
-            index: index + 1, // Assign index
-            // actions: <PettyCashActionDialog rowData={item} />, // Add actions
-            actions: <div>Hi</div>,
-          }))}
-          columnDefs={columnDefs}
-          domLayout="autoHeight"
-          // pagination={defaultTablePagination.pagination}
-          // paginationPageSize={defaultTablePagination.paginationPageSize}
-          // paginationPageSizeSelector={
-          //   defaultTablePagination.paginationPageSizeSelector
-          // }
-        />
-      </div>
+    <div className="w-full overflow-auto border border-gray-200 rounded-lg shadow dark:border-gray-800">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-12" />
+            <TableHead className="text-xs">ID</TableHead>
+            <TableHead>Product</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead className="text-right">
+              <span className="flex items-center">
+                Price
+                <ChevronDownIcon className="h-4 w-4 ml-1 -translate-y-0.5 opacity-50" />
+              </span>
+            </TableHead>
+            <TableHead className="text-right">Stock</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell className="text-xs">1</TableCell>
+            <TableCell className="font-medium">Laptop</TableCell>
+            <TableCell>Electronics</TableCell>
+            <TableCell className="text-right">$1200.00</TableCell>
+            <TableCell className="text-right">100</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="text-xs">2</TableCell>
+            <TableCell className="font-medium">T-Shirt</TableCell>
+            <TableCell>Apparel</TableCell>
+            <TableCell className="text-right">$25.00</TableCell>
+            <TableCell className="text-right">500</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="text-xs">3</TableCell>
+            <TableCell className="font-medium">Sneakers</TableCell>
+            <TableCell>Footwear</TableCell>
+            <TableCell className="text-right">$100.00</TableCell>
+            <TableCell className="text-right">200</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="text-xs">4</TableCell>
+            <TableCell className="font-medium">Backpack</TableCell>
+            <TableCell>Bags</TableCell>
+            <TableCell className="text-right">$50.00</TableCell>
+            <TableCell className="text-right">300</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="text-xs">5</TableCell>
+            <TableCell className="font-medium">Watch</TableCell>
+            <TableCell>Accessories</TableCell>
+            <TableCell className="text-right">$300.00</TableCell>
+            <TableCell className="text-right">150</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="text-xs">6</TableCell>
+            <TableCell className="font-medium">Headphones</TableCell>
+            <TableCell>Audio</TableCell>
+            <TableCell className="text-right">$80.00</TableCell>
+            <TableCell className="text-right">400</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="text-xs">7</TableCell>
+            <TableCell className="font-medium">Smartphone</TableCell>
+            <TableCell>Mobile</TableCell>
+            <TableCell className="text-right">$700.00</TableCell>
+            <TableCell className="text-right">250</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="text-xs">8</TableCell>
+            <TableCell className="font-medium">Guitar</TableCell>
+            <TableCell>Musical Instruments</TableCell>
+            <TableCell className="text-right">$400.00</TableCell>
+            <TableCell className="text-right">50</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="text-xs">9</TableCell>
+            <TableCell className="font-medium">Camera</TableCell>
+            <TableCell>Photography</TableCell>
+            <TableCell className="text-right">$900.00</TableCell>
+            <TableCell className="text-right">75</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="text-xs">10</TableCell>
+            <TableCell className="font-medium">Printer</TableCell>
+            <TableCell>Peripherals</TableCell>
+            <TableCell className="text-right">$150.00</TableCell>
+            <TableCell className="text-right">125</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+      {/* <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious href="#" />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="#">1</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="#" isActive>
+              2
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="#">3</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext href="#" />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination> */}
     </div>
-  );
-};
+  )
+}
 
-export default ManageTable;
+function ChevronDownIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  )
+}

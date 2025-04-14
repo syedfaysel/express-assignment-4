@@ -1,13 +1,22 @@
-import { CreateOrderDto, OrderResponseDto } from "@/dto/orderDto";
-import { baseApi } from "@/redux/api/baseApi";
+import { CreateOrderDto } from "@/dto/orderDto";
+import { baseApi, tagTypes } from "@/redux/api/baseApi";
 
 const orderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getOrders: builder.query<OrderResponseDto, void>({
+    getOrders: builder.query({
       query: () => ({
         url: `/orders`,
         method: "GET",
       }),
+      providesTags: [tagTypes.orderTag],
+    }),
+
+    getUserOrders: builder.query({
+      query: (userId) => ({
+        url: `/orders/user/${userId}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.orderTag],
     }),
 
     getOrderById: builder.query({
@@ -15,6 +24,7 @@ const orderApi = baseApi.injectEndpoints({
         url: `/orders/${id}`,
         method: "GET",
       }),
+      providesTags: [tagTypes.orderTag],
     }),
 
     // update order status
@@ -24,6 +34,7 @@ const orderApi = baseApi.injectEndpoints({
         method: "PUT",
         body: data,
       }),
+      invalidatesTags: [tagTypes.orderTag],
     }),
 
     // payment gateway stuff
@@ -33,7 +44,9 @@ const orderApi = baseApi.injectEndpoints({
         method: "POST",
         body
       }),
+      invalidatesTags: [tagTypes.orderTag]
     }),
+
   }),
 });
 
@@ -42,4 +55,5 @@ export const {
   useGetOrderByIdQuery,
   useUpdateOrderStatusMutation,
   useCreateOrderMutation,
+  useGetUserOrdersQuery
 } = orderApi;

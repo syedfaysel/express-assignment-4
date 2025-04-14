@@ -8,10 +8,10 @@ export type TShippingAddress = {
 };
 
 export type TAuthUser = {
+  id: string;
   name: string;
   age?: number;
   email: string;
-  password: string;
   photo?: string | null;
   role: "user" | "admin";
   userStatus: "active" | "inactive";

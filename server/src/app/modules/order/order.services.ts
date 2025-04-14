@@ -2,14 +2,10 @@ import { IOrder } from './order.interface';
 import Order from './order.model';
 
 const createOrderIntoDB = async (order: IOrder) => {
-  console.log(order);
-
   const result = await Order.create(order);
   return result;
 };
 const updatePaymentStatus = async (id: string) => {
-  console.log(id);
-
   const result = await Order.updateOne(
     { transactionId: id },
     {
@@ -28,8 +24,26 @@ const getOrders = async () => {
   return orders;
 };
 
+const getUserOrdersFromDB = async (userId: string) => {
+  const result = await Order.find({ userId: userId });
+  return result;
+};
+
+const getOrderById = async (id: string) => {
+  const order = await Order.findById(id);
+  return order;
+};
+
+const updateOrder = async (id: string, data: Partial<IOrder>) => {
+  const result = await Order.updateOne({ _id: id }, { $set: data });
+  return result;
+};
+
 export const orderServices = {
   createOrderIntoDB,
   updatePaymentStatus,
   getOrders,
+  getUserOrdersFromDB,
+  getOrderById,
+  updateOrder,
 };

@@ -1,4 +1,4 @@
-import { baseApi } from "@/redux/api/baseApi";
+import { baseApi, tagTypes } from "@/redux/api/baseApi";
 
 const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -7,13 +7,15 @@ const userApi = baseApi.injectEndpoints({
         url: `/user`,
         method: "GET",
       }),
+      providesTags: [tagTypes.userTag],
     }),
 
     getUserById: builder.query({
-      query: (id: string) => ({
+      query: (id) => ({
         url: `/user/${id}`,
         method: "GET",
       }),
+      providesTags: [tagTypes.userTag]
     }),
 
     updateUser: builder.mutation({
@@ -22,6 +24,7 @@ const userApi = baseApi.injectEndpoints({
         method: "PUT",
         body: data,
       }),
+      invalidatesTags: [tagTypes.userTag],
     }),
   }),
 });

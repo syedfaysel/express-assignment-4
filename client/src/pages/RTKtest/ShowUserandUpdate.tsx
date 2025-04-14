@@ -12,7 +12,13 @@ const ShowUserandUpdate = () => {
 
     const handleUpdate = async () => {
         const updatedData = {
-            age:25,
+            shippingAddress: {
+            street: "Updated Street",
+            city: "Updated City",
+            postalCode: "Updated Postal Code",
+            country: "Updated Country",
+          },
+          
           
         };
       

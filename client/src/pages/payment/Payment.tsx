@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import CustomTable from "../dashboard/product/CustomTable";
 
 const Payment = () => {
   const handleOrder = async () => {
@@ -120,6 +121,8 @@ const Payment = () => {
       >
         Place Order
       </Button>
+
+      <CustomTable/>
     </div>
   );
 };

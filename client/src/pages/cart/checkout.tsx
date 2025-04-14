@@ -36,7 +36,7 @@ const Checkout = () => {
       const toastId = toast.loading("Order Processing");
 
       const order = {
-        userId: "67fa9bfabcea91d0a2c2753e",
+        userId: user?.id,
         products: cartItems.map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
