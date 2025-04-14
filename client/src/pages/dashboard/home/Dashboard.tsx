@@ -55,7 +55,7 @@ const Dashboard = () => {
       <div className="flex h-screen">
         {/* Sidebar */}
         <div
-          className={`fixed inset-y-0 left-0 bg-gray-900 text-white w-64 p-5 transform ${
+          className={`fixed inset-y-0 left-0 bg-gray-900 text-white w-64 p-5 transform z-50 ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-64"
           } transition-transform lg:relative lg:translate-x-0`}
         >
