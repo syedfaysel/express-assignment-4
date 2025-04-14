@@ -71,6 +71,7 @@ const createOrder = catchAsync(async (req: Request, res: Response) => {
       trackingNumber: null,
     };
 
+    // eslint-disable-next-line no-unused-vars
     const returnData = orderServices.createOrderIntoDB(orderData);
   });
 });
