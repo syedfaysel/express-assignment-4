@@ -6,34 +6,43 @@ import {
   TCartItem,
 } from "@/redux/features/cart/cartSlice";
 import { useAppDispatch } from "@/redux/hooks";
+import { useGetSingleProductQuery } from "@/redux/features/proudct/productApi";
 
 type CartItemProps = {
   item: TCartItem;
 };
 
 const CartItem = ({ item }: CartItemProps) => {
-
-
   const dispatch = useAppDispatch();
 
-  const handleUpdate = (e: ChangeEvent<HTMLSelectElement>, key: keyof TCartItem) => {
+  const { data } = useGetSingleProductQuery({ productId: item.productId });
+  const itemProduct = data?.data;
+
+  const handleUpdate = (
+    e: ChangeEvent<HTMLSelectElement>,
+    key: keyof TCartItem
+  ) => {
     const val = key === "quantity" ? parseInt(e.target.value) : e.target.value;
 
-    dispatch(updateCart({
-      productId: item.productId,
-      selectedSize: item.selectedSize,
-      selectedColor: item.selectedColor,
-      key,
-      val,
-    }));
+    dispatch(
+      updateCart({
+        productId: item.productId,
+        selectedSize: item?.selectedSize || undefined,
+        selectedColor: item?.selectedColor || undefined,
+        key,
+        val,
+      })
+    );
   };
 
   const handleRemove = () => {
-    dispatch(removeFromCart({
-      productId: item.productId,
-      selectedSize: item.selectedSize,
-      selectedColor: item.selectedColor,
-    }));
+    dispatch(
+      removeFromCart({
+        productId: item.productId,
+        selectedSize: item.selectedSize || undefined,
+        selectedColor: item.selectedColor || undefined,
+      })
+    );
   };
 
   return (
@@ -60,7 +69,7 @@ const CartItem = ({ item }: CartItemProps) => {
 
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center gap-4 text-sm md:text-md text-black/[0.6]">
-            {/* {item.selectedSize && (
+            {item.selectedSize && (
               <div className="flex items-center gap-1">
                 <span className="font-semibold">Size:</span>
                 <select
@@ -68,14 +77,36 @@ const CartItem = ({ item }: CartItemProps) => {
                   onChange={(e) => handleUpdate(e, "selectedSize")}
                   className="hover:text-black"
                 >
-                  {item.map((size) => (
-                    <option key={size} value={size}>
+                  {itemProduct?.sizes?.map((size: string, index: number) => (
+                    <option
+                      key={index}
+                      value={size}
+                    >
                       {size}
                     </option>
                   ))}
                 </select>
               </div>
-            )} */}
+            )}
+            {item.selectedColor && (
+              <div className="flex items-center gap-1">
+                <span className="font-semibold">Color:</span>
+                <select
+                  value={item.selectedColor}
+                  onChange={(e) => handleUpdate(e, "selectedSize")}
+                  className="hover:text-black"
+                >
+                  {itemProduct?.colors?.map((color: string, index: number) => (
+                    <option
+                      key={index}
+                      value={color}
+                    >
+                      {color}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div className="flex items-center gap-1">
               <span className="font-semibold">Qty:</span>
@@ -85,7 +116,10 @@ const CartItem = ({ item }: CartItemProps) => {
                 className="hover:text-black"
               >
                 {[...Array(10)].map((_, i) => (
-                  <option key={i + 1} value={i + 1}>
+                  <option
+                    key={i + 1}
+                    value={i + 1}
+                  >
                     {i + 1}
                   </option>
                 ))}

@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Wrapper from "@/layout/Wrapper";
-import { useAppSelector } from "@/redux/hooks";
-import { selectCartItems } from "@/redux/features/cart/cartSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { clearCart, selectCartItems } from "@/redux/features/cart/cartSlice";
 import CartItemDisabled from "./cartItemDisabled";
 import { toast } from "sonner";
 import { useCreateOrderMutation } from "@/redux/features/order/orderApi";
@@ -10,6 +10,8 @@ import { selectUser, TShippingAddress } from "@/redux/features/auth/authSlice";
 import OrderForm from "./orderForm";
 
 const Checkout = () => {
+
+  const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
   const cartItems = useAppSelector(selectCartItems);
   const [location, setLocation] = useState("dhaka");
@@ -82,6 +84,7 @@ const Checkout = () => {
 
       // Send the order to the server
       const res = await createOrder(order).unwrap();
+      dispatch(clearCart());
       if (res) {
         window.location.href = res.url;
         toast.info("Redirecting to payment page", {

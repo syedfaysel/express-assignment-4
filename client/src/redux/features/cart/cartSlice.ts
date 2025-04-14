@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Types
@@ -39,23 +40,22 @@ export const cartSlice = createSlice({
   reducers: {
     addToCart: (
       state,
-      action: PayloadAction<Omit<TCartItem, "quantity" | "price">>
+      action: PayloadAction<TCartItem & { quantity: number }>
     ) => {
       const existingItem = findCartItem(
         state.cartItems,
         action.payload.productId,
-        action.payload.selectedSize,
-        action.payload.selectedColor
+        action.payload.selectedSize!,
+        action.payload.selectedColor!,
       );
 
       if (existingItem) {
-        existingItem.quantity += 1;
+        existingItem.quantity += action.payload.quantity;
         existingItem.price = existingItem.quantity * existingItem.oneQuantityPrice;
       } else {
         state.cartItems.push({
           ...action.payload,
-          quantity: 1,
-          price: action.payload.oneQuantityPrice,
+          price: action.payload.oneQuantityPrice * action.payload.quantity,
         });
       }
     },
@@ -78,7 +78,7 @@ export const cartSlice = createSlice({
         ) {
           const updated = { ...item, [action.payload.key]: action.payload.val };
           if (action.payload.key === "quantity") {
-            updated.price = updated.oneQuantityPrice * action.payload.val;
+            updated.price = updated.oneQuantityPrice * action.payload?.val;
           }
           return updated;
         }

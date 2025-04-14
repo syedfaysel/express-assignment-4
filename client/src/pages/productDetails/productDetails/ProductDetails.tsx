@@ -28,32 +28,36 @@ const ProductDetails = () => {
   };
 
   const handleAddToCart = () => {
-    if (
-      (product.sizes  && !selectedSize) ||
-      (product.colors && !selectedColor)
-    ) {
+    const needsSize = product.sizes?.length;
+    const needsColor = product.colors?.length;
+  
+    if ((needsSize && !selectedSize) || (needsColor && !selectedColor)) {
       setShowError(true);
       document.getElementById("sizesGrid")?.scrollIntoView({
         block: "center",
         behavior: "smooth",
       });
+      return; // stop execution if validation fails
     }
-
+  
     setShowError(false);
-
+  
     const cartItem = {
       productId: product._id!,
       name: product.name,
       image: product.images[0],
       selectedSize,
       selectedColor,
+      quantity,
       oneQuantityPrice: product.price,
+      price: product.price * quantity,
     };
-
+  
     dispatch(addToCart(cartItem));
-    console.log("something wrong", cartItem);
     notify();
   };
+  
+  
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 font-[josefin-sans]">
@@ -143,7 +147,7 @@ const ProductDetails = () => {
             <input
               type="number"
               min={1}
-              value={quantity}
+              value={quantity as number}
               onChange={(e) => setQuantity(parseInt(e.target.value))}
               className="w-16 border px-2 py-1 rounded"
             />
