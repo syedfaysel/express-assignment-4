@@ -12,7 +12,7 @@ type Inputs = {
 const SignUp = () => {
   const { register, handleSubmit } = useForm<Inputs>();
   const navigate = useNavigate();
-  const [registerUser, { error }] = useRegisterMutation();
+  const [registerUser] = useRegisterMutation();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const toastId = toast.loading("Creating account...");

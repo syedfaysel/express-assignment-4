@@ -28,15 +28,43 @@ const Checkout = () => {
 
   const [contactPhone, setContactPhone] = useState<string>("");
 
-  const [createOrder, { isSuccess, isLoading }] = useCreateOrderMutation();
+  const [formErrors, setFormErrors] = useState({
+    street: false,
+    city: false,
+    postalCode: false,
+    country: false,
+    contactPhone: false,
+  });
 
-  // TODO:: Add checkout functionality here
+  // Validation function
+  const validateForm = () => {
+    const errors = {
+      street: shippingAddress.street.trim() === "",
+      city: shippingAddress.city.trim() === "",
+      postalCode: shippingAddress.postalCode.trim() === "",
+      country: shippingAddress.country.trim() === "",
+      contactPhone: contactPhone.trim() === "",
+    };
+
+    setFormErrors(errors);
+
+    return !Object.values(errors).includes(true);
+  };
+
+  const [createOrder, { isError, error }] = useCreateOrderMutation();
+
   const handlePlaceOrder = async () => {
+    const isValid = validateForm();
+    if (!isValid) {
+      toast.error("Please fill all the fields correctly.");
+      return;
+    }
+
     try {
       const toastId = toast.loading("Order Processing");
 
       const order = {
-        userId: user?.id,
+        userId: user?.id as string,
         products: cartItems.map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
@@ -70,6 +98,11 @@ const Checkout = () => {
     }
   };
 
+  if (isError) {
+    toast.error("Error Placing Order. Please try again later.");
+    console.log("Error placing order:", error);
+  }
+
   return (
     <div className="mx-3 md:mx-0 md:py-20">
       <Wrapper>
@@ -78,8 +111,7 @@ const Checkout = () => {
             {/* HEADING AND PARAGRAPH START */}
             <div className="text-center max-w-[800px] mx-auto mt-8 md:mt-0">
               <div className="text-[28px] md:text-[34px] mb-5 font-semibold leading-tight">
-                Place Order <br />
-                <span className="text-lg">(Cash on Delivery)</span>
+                Place Order
               </div>
             </div>
             {/* HEADING AND PARAGRAPH END */}
@@ -174,6 +206,8 @@ const Checkout = () => {
                   contactPhone={contactPhone}
                   setContactPhone={setContactPhone}
                   onSubmit={handlePlaceOrder}
+                  formErrors={formErrors}
+                  setFormErrors={setFormErrors}
                 />
 
                 {/* BUTTON START */}

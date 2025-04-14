@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type React from "react";
 import { useEffect, useState } from "react";
 import { Mail, Edit, Save, X, User, Flag, Home } from "lucide-react";
@@ -23,9 +24,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { useGetUserByIdQuery, useUpdateUserMutation } from "@/redux/features/user/userApi";
-import { TAuthUser } from "@/redux/features/auth/authSlice";
+import {
+  useGetUserByIdQuery,
+  useUpdateUserMutation,
+} from "@/redux/features/user/userApi";
+import {  TAuthUser } from "@/redux/features/auth/authSlice";
 import { userDto } from "@/dto/userDto";
+import { toast } from "sonner";
 
 type Props = {
   id?: string;
@@ -43,7 +48,10 @@ export default function UserProfile({ id, user }: Props) {
     skip: !shouldFetch,
   });
 
-  const [updateUser, {isLoading: isUpdateLoading, isSuccess: isUpdateSuccess}] = useUpdateUserMutation();
+  const [
+    updateUser,
+    { isLoading: isUpdateLoading, isSuccess: isUpdateSuccess },
+  ] = useUpdateUserMutation();
 
   const finalUser = user || data?.data;
 
@@ -83,13 +91,15 @@ export default function UserProfile({ id, user }: Props) {
     }
   }, [finalUser, isUpdateSuccess]);
 
+
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     if (name.includes(".")) {
       // Handle nested shipping address fields
       const [parent, child] = name.split(".");
-      setFormData((prev:any) => ({
+      setFormData((prev: any) => ({
         ...prev,
         [parent]: {
           ...(prev[parent as keyof TAuthUser] as object),
@@ -120,12 +130,14 @@ export default function UserProfile({ id, user }: Props) {
 
   const handleSave = () => {
     try {
-      // setUserData(formData);
+      const data = updateUser({ id: id!, data: formData });
+      console.log("User updated successfully:", data);
+
+      toast.success("User updated successfully!");
       setIsEditing(false);
-      updateUser({ id: id!, data: formData });
-      
     } catch (error) {
       console.log("Error updating user:", error);
+      toast.error("Error updating user");
     }
   };
 
@@ -194,15 +206,6 @@ export default function UserProfile({ id, user }: Props) {
                       }
                     >
                       {userData.role}
-                    </Badge>
-                    <Badge
-                      variant={
-                        userData.userStatus === "active"
-                          ? "default"
-                          : "destructive"
-                      }
-                    >
-                      {userData.userStatus}
                     </Badge>
                   </div>
                 </div>
@@ -279,6 +282,7 @@ export default function UserProfile({ id, user }: Props) {
                       type="email"
                       value={formData.email}
                       onChange={handleInputChange}
+                      disabled
                     />
                   </div>
                 </div>
@@ -311,12 +315,12 @@ export default function UserProfile({ id, user }: Props) {
                     <Label htmlFor="role">Role</Label>
                     <Select
                       value={formData.role}
-                      onValueChange={(value) =>
+                      onValueChange={(value: string) =>
                         handleSelectChange("role", value)
                       }
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select role" />
+                      <SelectTrigger disabled>
+                        <SelectValue placeholder="Select Role" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="user">User</SelectItem>
@@ -327,8 +331,9 @@ export default function UserProfile({ id, user }: Props) {
                   <div className="space-y-2">
                     <Label htmlFor="userStatus">Status</Label>
                     <Select
+                      disabled
                       value={formData.userStatus}
-                      onValueChange={(value) =>
+                      onValueChange={(value: string) =>
                         handleSelectChange(
                           "userStatus",
                           value as "active" | "inactive"
@@ -403,9 +408,12 @@ export default function UserProfile({ id, user }: Props) {
               <X className="h-4 w-4 mr-2" />
               Cancel
             </Button>
-            <Button onClick={handleSave}>
+            <Button
+              onClick={handleSave}
+              disabled={isUpdateLoading}
+            >
               <Save className="h-4 w-4 mr-2" />
-              Save Changes
+              {isUpdateLoading ? "Saving..." : "Save Changes"}
             </Button>
           </CardFooter>
         )}

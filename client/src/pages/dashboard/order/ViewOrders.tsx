@@ -44,25 +44,21 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { TOrder } from "@/dto/orderDto";
+import { OrderResponseDto, TOrder } from "@/dto/orderDto";
 import { useGetUserOrdersQuery } from "@/redux/features/order/orderApi";
 import { useAppSelector } from "@/redux/hooks";
 import { selectUser } from "@/redux/features/auth/authSlice";
 
 export default function ViewOrdersPage() {
   const user = useAppSelector(selectUser);
-  const { data, isLoading, isError } = useGetUserOrdersQuery(user?.id);
+  const { data, isError: isGetError } = useGetUserOrdersQuery(user?.id);
 
+  const orders: OrderResponseDto[] = data?.data || [];
 
-  const fetchedOrders = data?.data || [];
-  // console.log(fetchedOrders);
-
-  const [orders, setOrders] = useState(fetchedOrders);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<TOrder["status"] | "all">(
     "all"
   );
-  const [selectedOrder, setSelectedOrder] = useState<TOrder | null>(null);
 
   // Filter orders based on search query and status filter
   const filteredOrders = orders.filter((order) => {
@@ -89,7 +85,14 @@ export default function ViewOrdersPage() {
       case "shipped":
         return <Badge variant="default">Shipped</Badge>;
       case "delivered":
-        return <Badge variant="default" color="green">Delivered</Badge>;
+        return (
+          <Badge
+            variant="default"
+            color="green"
+          >
+            Delivered
+          </Badge>
+        );
       case "cancelled":
         return <Badge variant="destructive">Cancelled</Badge>;
     }
@@ -106,6 +109,21 @@ export default function ViewOrdersPage() {
     return new Date(date).toLocaleDateString(undefined, options);
   };
 
+  // Handle error state
+  if (isGetError) {
+    return (
+      <div className="container mx-auto py-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Error</CardTitle>
+            <CardDescription>
+              There was an error fetching your orders. Please try again later.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
   return (
     <div className="container mx-auto py-6">
       <div className="flex items-center justify-between mb-6">
@@ -123,7 +141,7 @@ export default function ViewOrdersPage() {
           </div>
           <Select
             value={statusFilter}
-            onValueChange={(value) =>
+            onValueChange={(value: string) =>
               setStatusFilter(value as TOrder["status"] | "all")
             }
           >
@@ -206,7 +224,6 @@ export default function ViewOrdersPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => setSelectedOrder(order)}
                           >
                             <Eye className="h-4 w-4" />
                             <span className="sr-only">View order details</span>

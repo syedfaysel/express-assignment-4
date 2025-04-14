@@ -2,14 +2,16 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TShippingAddress } from "@/redux/features/auth/authSlice";
-// import { Button } from "@/components/ui/button";
 
+type TFormErrors = Record<keyof TShippingAddress | "contactPhone", boolean>;
 
 interface OrderFormProps {
   shippingAddress: TShippingAddress;
   setShippingAddress: React.Dispatch<React.SetStateAction<TShippingAddress>>;
   contactPhone: string;
   setContactPhone: React.Dispatch<React.SetStateAction<string>>;
+  formErrors: TFormErrors;
+  setFormErrors: React.Dispatch<React.SetStateAction<TFormErrors>>;
   onSubmit: () => void;
 }
 
@@ -18,10 +20,25 @@ const OrderForm: React.FC<OrderFormProps> = ({
   setShippingAddress,
   contactPhone,
   setContactPhone,
+  formErrors,
+  setFormErrors,
   onSubmit,
 }) => {
-  return (
+  const handleInputChange = (field: keyof TShippingAddress, value: string) => {
+    setShippingAddress((prev) => ({ ...prev, [field]: value }));
+    if (formErrors[field]) {
+      setFormErrors((prev) => ({ ...prev, [field]: false }));
+    }
+  };
 
+  const handlePhoneChange = (value: string) => {
+    setContactPhone(value);
+    if (formErrors.contactPhone) {
+      setFormErrors((prev) => ({ ...prev, contactPhone: false }));
+    }
+  };
+
+  return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
@@ -31,71 +48,61 @@ const OrderForm: React.FC<OrderFormProps> = ({
     >
       <h2 className="text-xl font-bold mb-4">Shipping Details</h2>
 
-      {/* Street */}
-      <div>
-        <Label htmlFor="street">Street</Label>
-        <Input
-          id="street"
-          value={shippingAddress.street}
-          onChange={(e) =>
-            setShippingAddress({ ...shippingAddress, street: e.target.value })
-          }
-          placeholder="123 Stationery Lane"
-        />
-      </div>
+      <Label htmlFor="street">Street</Label>
+      <Input
+        id="street"
+        value={shippingAddress.street}
+        onChange={(e) => handleInputChange("street", e.target.value)}
+        placeholder="123 Stationery Lane"
+      />
+      {formErrors.street && (
+        <p className="text-red-500 text-sm">Street is required</p>
+      )}
 
-      {/* City */}
-      <div>
-        <Label htmlFor="city">City</Label>
-        <Input
-          id="city"
-          value={shippingAddress.city}
-          onChange={(e) =>
-            setShippingAddress({ ...shippingAddress, city: e.target.value })
-          }
-          placeholder="Dhaka"
-        />
-      </div>
+      <Label htmlFor="city">City</Label>
+      <Input
+        id="city"
+        value={shippingAddress.city}
+        onChange={(e) => handleInputChange("city", e.target.value)}
+        placeholder="Dhaka"
+      />
+      {formErrors.city && (
+        <p className="text-red-500 text-sm">City is required</p>
+      )}
 
-      {/* Postal Code */}
-      <div>
-        <Label htmlFor="postalCode">Postal Code</Label>
-        <Input
-          id="postalCode"
-          value={shippingAddress.postalCode}
-          onChange={(e) =>
-            setShippingAddress({
-              ...shippingAddress,
-              postalCode: e.target.value,
-            })
-          }
-          placeholder="1207"
-        />
-      </div>
+      <Label htmlFor="postalCode">Postal Code</Label>
+      <Input
+        id="postalCode"
+        value={shippingAddress.postalCode}
+        onChange={(e) => handleInputChange("postalCode", e.target.value)}
+        placeholder="1207"
+      />
+      {formErrors.postalCode && (
+        <p className="text-red-500 text-sm">Postal Code is required</p>
+      )}
 
-      {/* Country */}
-      <div>
-        <Label htmlFor="country">Country</Label>
-        <Input
-          id="country"
-          value={shippingAddress.country}
-          onChange={(e) =>
-            setShippingAddress({ ...shippingAddress, country: e.target.value })
-          }
-          placeholder="Bangladesh"
-        />
-      </div>
+      <Label htmlFor="country">Country</Label>
+      <Input
+        id="country"
+        value={shippingAddress.country}
+        onChange={(e) => handleInputChange("country", e.target.value)}
+        placeholder="Bangladesh"
+      />
+      {formErrors.country && (
+        <p className="text-red-500 text-sm">Country is required</p>
+      )}
 
-      {/* Contact Phone */}
-      <div>
-        <Label htmlFor="contactPhone">Contact Phone</Label>
-        <Input
-          id="contactPhone"
-          value={contactPhone}
-          onChange={(e) => setContactPhone(e.target.value)}
-          placeholder="+880123456789"
-        />
-      </div>
+      <Label htmlFor="contactPhone">Contact Phone</Label>
+      <Input
+        className="[placeholder:text-sm placeholder:text-gray-400]"
+        id="contactPhone"
+        value={contactPhone}
+        onChange={(e) => handlePhoneChange(e.target.value)}
+        placeholder="+880123456789"
+      />
+      {formErrors.contactPhone && (
+        <p className="text-red-500 text-sm">Contact Phone is required</p>
+      )}
     </form>
   );
 };

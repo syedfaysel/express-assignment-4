@@ -5,7 +5,7 @@ import { useAppSelector } from "@/redux/hooks";
 const ShowUserandUpdate = () => {
     const user = useAppSelector(selectUser);
     console.log(user);
-    const { data: logedUser, isLoading, error } = useGetUserByIdQuery(user?.id as string);
+    const { data: logedUser} = useGetUserByIdQuery(user?.id as string);
     console.log(logedUser);
 
     const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();

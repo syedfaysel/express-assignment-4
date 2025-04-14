@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react"; // Icon library, install via `npm install lucide-react`
+import { Menu, X } from "lucide-react"; 
 import logo from "../assets/store-logo.png";
 import { NavLink } from "react-router-dom";
 import { useAppSelector } from "@/redux/hooks";
@@ -34,8 +34,11 @@ const Navbar = () => {
           {navLinks.map((link) => (
             <li key={link.name}>
               <NavLink
+                
                 to={link.href}
-                className="hover:text-black"
+                className={({ isActive }) =>
+                  isActive ? "text-slate-800 font-semibold" : "hover:text-black"
+                }
               >
                 {link.name}
               </NavLink>
@@ -46,13 +49,12 @@ const Navbar = () => {
         {/* Auth Buttons */}
         {isLoggedIn ? (
           <div className="hidden md:flex space-x-4 items-center">
-
+            <CartOnHeader />
             <NavLink to="/dashboard">
               <button className="hidden md:block px-4 py-2 bg-[#1E2525] text-white rounded hover:bg-[#1E2525] transition cursor-pointer">
                 Dashboard
               </button>
             </NavLink>
-            <CartOnHeader />
           </div>
         ) : (
           <div className="hidden md:flex space-x-4">
@@ -69,14 +71,18 @@ const Navbar = () => {
           </div>
         )}
 
-
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden text-gray-700 focus:outline-none"
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Mobile Menu Button & Cart */}
+        <div className="flex items-center md:hidden">
+          <div className="inline">
+            <CartOnHeader />
+          </div>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden text-gray-700 focus:outline-none"
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}

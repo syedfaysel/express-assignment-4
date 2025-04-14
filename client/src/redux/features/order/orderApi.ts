@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { CreateOrderDto } from "@/dto/orderDto";
 import { baseApi, tagTypes } from "@/redux/api/baseApi";
 
