@@ -32,7 +32,7 @@ const orderApi = baseApi.injectEndpoints({
     updateOrderStatus: builder.mutation({
       query: ({ id, data }) => ({
         url: `/orders/${id}`,
-        method: "PUT",
+        method: "PATCH",
         body: data,
       }),
       invalidatesTags: [tagTypes.orderTag],

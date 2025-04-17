@@ -17,21 +17,69 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useGetProductsQuery } from "@/redux/features/proudct/productApi";
+import {
+  useCreateProductMutation,
+  useDeleteProductMutation,
+  useGetProductsQuery,
+} from "@/redux/features/proudct/productApi";
 
-import EditProductForm from "./EditProductForm";
 import AddProductForm from "./AddProductForm";
-// import ManageTable from "./CustomTable";
+import { useState } from "react";
+import { toast } from "sonner";
+import ProductActionDialog from "./ProductActionDialog";
+
 const ManageProducts = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
   const {
     data,
+    refetch,
     isError: isProductsError,
     isLoading: isProductsLoading,
   } = useGetProductsQuery({});
+
+  const [createProduct] = useCreateProductMutation();
+
+  const [deleteProduct, { isLoading: isDeleteLoading }] =
+    useDeleteProductMutation();
+
   if (isProductsLoading) return <div>Loading...</div>;
   if (isProductsError) return <div>Error loading products</div>;
   const products: productDto[] = data?.data || [];
-  console.log(data);
+
+  const handleAddProduct = async (newProduct: Partial<productDto>) => {
+    try {
+      console.log("Submit new product:", newProduct);
+      const res = await createProduct(newProduct).unwrap();
+      if (res.success) {
+        toast.success(res.message || "Product added successfully!");
+        setIsOpen(false);
+      } else {
+        toast.info(res.message || "Failed to add product");
+      }
+    } catch (error) {
+      console.error("Error adding product:", error);
+      toast.error("Failed to add product. Please try again.");
+    }
+  };
+
+  const handleDelete = async (productId: string) => {
+    try {
+      const res = await deleteProduct(productId).unwrap();
+      if (res.success) {
+        toast.success(res.message || "Product deleted successfully!");
+        refetch();
+      } else {
+        toast.info(res.message || "Failed to delete product");
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      toast.error("Failed to delete product. Please try again.");
+    } finally {
+      setIsDeleteOpen(false);
+    }
+  };
 
   return (
     <div>
@@ -40,7 +88,10 @@ const ManageProducts = () => {
         <p className="text-gray-500">Add, update or remove products</p>
       </div>
       <div className="flex justify-end items-center mb-4">
-        <Dialog>
+        <Dialog
+          open={isOpen}
+          onOpenChange={setIsOpen}
+        >
           <DialogTrigger asChild>
             <Button>Add New Product</Button>
           </DialogTrigger>
@@ -54,14 +105,17 @@ const ManageProducts = () => {
 
             <AddProductForm
               onSubmit={(newProduct) => {
-                console.log("Add product:", newProduct);
+                handleAddProduct(newProduct);
               }}
             />
           </DialogContent>
         </Dialog>
       </div>
       <div className="w-full p-4">
-        <Table className="overflow-x-auto border p-3" align="center">
+        <Table
+          className="overflow-x-auto border p-3"
+          align="center"
+        >
           <TableCaption>A list of products.</TableCaption>
           <TableHeader>
             <TableRow>
@@ -71,19 +125,17 @@ const ManageProducts = () => {
               <TableHead>Description</TableHead>
               <TableHead>Stock</TableHead>
               <TableHead>Price</TableHead>
-              <TableHead className="text-right">Colors</TableHead>
-              <TableHead className="text-right">Sizes</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product) => (
-              <TableRow key={product._id}>
+            {products.map((product, index: number) => (
+              <TableRow key={index}>
                 <TableCell className="font-medium">
                   <img
                     className="w-20"
                     src={product.images[0]}
-                    alt=""
+                    alt="Product Image"
                   />
                 </TableCell>
                 <TableCell>{product.name}</TableCell>
@@ -91,56 +143,48 @@ const ManageProducts = () => {
                 <TableCell>{product.description.slice(0, 20)}...</TableCell>
                 <TableCell>{product.stock}</TableCell>
                 <TableCell>৳ {product.price.toLocaleString("en-BD")}</TableCell>
-                <TableCell className="text-right">
-                  {`[`}
-                  {product.colors?.map((color, index) => {
-                    return (
-                      <span key={index}>
-                        {color}
-                        {index !== (product.colors ?? []).length - 1 && ", "}
-                      </span>
-                    );
-                  })}
-                  {`]`}
-                </TableCell>
-                <TableCell className="text-right">
-                  {`[`}
-                  {product.colors?.map((size, index) => {
-                    return (
-                      <span key={index}>
-                        {size}
-                        {index !== (product.colors ?? []).length - 1 && ", "}
-                      </span>
-                    );
-                  })}
-                  {`]`}
-                </TableCell>
-                <TableCell className="text-right">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline">Edit</Button>
-                    </DialogTrigger>
 
-                    <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-6">
+                <TableCell className="text-right">
+                  <ProductActionDialog rowData={product} />
+                  {/* Delete Dialog */}
+                  <Dialog
+                    open={isDeleteOpen}
+                    onOpenChange={setIsDeleteOpen}
+                  >
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        className="ml-2"
+                      >
+                        Delete
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
                       <DialogHeader>
-                        <DialogTitle>Edit Product</DialogTitle>
+                        <DialogTitle>Are you sure?</DialogTitle>
                         <DialogDescription>
-                          Update your product details below.
+                          This action cannot be undone.
                         </DialogDescription>
                       </DialogHeader>
-
-                      <EditProductForm
-                        product={product}
-                        onSubmit={(updatedData) => {
-                          console.log("Submit updated product:", updatedData);
-                        }}
-                      />
+                      <div className="flex justify-between mt-4">
+                        <Button
+                          variant="outline"
+                          onClick={() => setIsDeleteOpen(false)}
+                          className="cursor-pointer"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleDelete(product._id!)}
+                          disabled={isDeleteLoading}
+                          className="cursor-pointer hover:bg-red-800"
+                        >
+                          {isDeleteLoading ? "Deleting..." : "Confirm Delete"}
+                        </Button>
+                      </div>
                     </DialogContent>
                   </Dialog>
-
-                  <button className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-200 ml-2 cursor-pointer">
-                    Delete
-                  </button>
                 </TableCell>
               </TableRow>
             ))}

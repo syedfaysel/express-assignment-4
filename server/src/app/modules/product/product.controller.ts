@@ -19,6 +19,7 @@ const addNewProduct = catchAsync(async (req: Request, res: Response) => {
 const getAllProducts = catchAsync(async (req: Request, res: Response) => {
   const result = await productServices.getAllProductsFromDB();
   sendResponse(res, {
+    success: true,
     statusCode: StatusCodes.OK,
     message: 'Products fetched successfully',
     data: result,
@@ -30,6 +31,7 @@ const getProductById = catchAsync(async (req: Request, res: Response) => {
   const result = await productServices.getProductByIdFromDB(id);
 
   sendResponse(res, {
+    success: true,
     statusCode: StatusCodes.OK,
     message: 'Product fetched successfully by id',
     data: result,
@@ -41,6 +43,7 @@ const updateProductById = catchAsync(async (req: Request, res: Response) => {
   const updatedData = req.body;
   const result = await productServices.updateProductIntoDB(id, updatedData);
   sendResponse(res, {
+    success: true,
     statusCode: StatusCodes.OK,
     message: 'Product updated successfully',
     data: result,
@@ -52,8 +55,20 @@ const updateProduct = catchAsync(async (req: Request, res: Response) => {
   const updatedData = req.body;
   const result = await productServices.updateProductIntoDB(id, updatedData);
   sendResponse(res, {
+    success: true,
     statusCode: StatusCodes.OK,
     message: 'Product updated successfully',
+    data: result,
+  });
+});
+
+const deleteProduct = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const result = await productServices.deleteProductFromDB(id);
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Product deleted successfully',
     data: result,
   });
 });
@@ -64,4 +79,5 @@ export const productControllers = {
   getProductById,
   updateProduct,
   updateProductById,
+  deleteProduct,
 };

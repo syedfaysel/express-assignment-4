@@ -18,8 +18,9 @@ import Cart from "@/pages/cart/cart";
 import PaymentFailed from "@/pages/payment/paymentFailed";
 import ProfilePage from "@/pages/dashboard/user/ProfilePage";
 import Checkout from "@/pages/cart/checkout";
-import ManageOrders from "@/pages/dashboard/order/ManageOrders";
+// import ManageOrders from "@/pages/dashboard/order/ManageOrders";
 import ViewOrdersPage from "@/pages/dashboard/order/ViewOrders";
+import ManageOrdersAlt from "@/pages/dashboard/order/ManageOrdersAlt";
 
 const router = createBrowserRouter([
   {
@@ -110,7 +111,7 @@ const router = createBrowserRouter([
       },
       {
         path: "manage-orders",
-        element: <ProtectedRoute roles={["admin"]}><ManageOrders/></ProtectedRoute>,
+        element: <ProtectedRoute roles={["admin"]}><ManageOrdersAlt/></ProtectedRoute>,
       },
       {
         path: "view-orders",

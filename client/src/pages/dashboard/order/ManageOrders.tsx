@@ -26,7 +26,6 @@ const ManageOrders = () => {
   const { data, isLoading, isError } = useGetOrdersQuery({});
 
   const orders : OrderResponseDto[] = data?.data || [];
-  console.log(orders);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading users</div>;

@@ -1,4 +1,4 @@
-import { baseApi } from "@/redux/api/baseApi";
+import { baseApi, tagTypes } from "@/redux/api/baseApi";
 
 export type getOneProductArgsType = {
   productId: string;
@@ -11,10 +11,15 @@ const productApi = baseApi.injectEndpoints({
         url: "/products",
         method: "GET",
       }),
+      providesTags: [tagTypes.productTag],
     }),
 
     getSingleProduct: builder.query({
-      query: ({ productId }) => `/products/${productId}`,
+      query: ({ productId }) => ({
+        url: `/products/${productId}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.productTag],
     }),
 
     createProduct: builder.mutation({
@@ -23,6 +28,7 @@ const productApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: [tagTypes.productTag],
     }),
 
      updateProduct: builder.mutation({
@@ -30,7 +36,8 @@ const productApi = baseApi.injectEndpoints({
         url: `/products/${productId}`,
         method: "PATCH", 
         body: data,
-      }),
+       }),
+       invalidatesTags: [tagTypes.productTag],
     }),
 
     deleteProduct: builder.mutation({
@@ -38,6 +45,7 @@ const productApi = baseApi.injectEndpoints({
         url: `/products/${productId}`,
         method: "DELETE",
       }),
+      invalidatesTags: [tagTypes.productTag],
     }),
     
 
