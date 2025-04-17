@@ -28,7 +28,7 @@ import {
   useGetUserByIdQuery,
   useUpdateUserMutation,
 } from "@/redux/features/user/userApi";
-import {  TAuthUser } from "@/redux/features/auth/authSlice";
+import { TAuthUser } from "@/redux/features/auth/authSlice";
 import { userDto } from "@/dto/userDto";
 import { toast } from "sonner";
 
@@ -90,8 +90,6 @@ export default function UserProfile({ id, user }: Props) {
       });
     }
   }, [finalUser, isUpdateSuccess]);
-
-
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -352,6 +350,7 @@ export default function UserProfile({ id, user }: Props) {
                 </div>
 
                 <Separator />
+                {/* Shipping Address begin */}
                 <h3 className="font-medium">Shipping Address</h3>
 
                 <div className="grid grid-cols-2 gap-4">

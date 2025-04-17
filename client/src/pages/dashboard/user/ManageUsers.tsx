@@ -7,19 +7,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { TAuthUser } from "@/redux/features/auth/authSlice";
+
 import { useGetUsersQuery } from "@/redux/features/user/userApi";
-import EditUserForm from "./EditUserFrom";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { userDto } from "@/dto/userDto";
+import UserActionDialog from "./ActionDialog";
 
 const ManageUsers = () => {
   const {
@@ -27,10 +20,14 @@ const ManageUsers = () => {
     isError: isUsersError,
     isLoading: isUsersLoading,
   } = useGetUsersQuery({});
+
   if (isUsersLoading) return <div>Loading...</div>;
   if (isUsersError) return <div>Error loading users</div>;
-  const users: TAuthUser[] = data?.data || [];
-  console.log(data);
+
+  const users: userDto[] = data?.data || [];
+
+  if (!users.length) return <div>No users found</div>;
+
   return (
     <div>
       <div className="flex flex-col gap-4 p-4">
@@ -39,8 +36,8 @@ const ManageUsers = () => {
       </div>
 
       {/* Table Start */}
-      <div className="w-full overflow-x-auto border">
-        <div className="min-w-[600px]">
+      <div className="max-w-[1200px] overflow-x-auto border">
+        <div className="">
           <Table>
             <TableCaption>A list of users.</TableCaption>
             <TableHeader>
@@ -50,7 +47,6 @@ const ManageUsers = () => {
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Role</TableHead>
-                <TableHead>Age</TableHead>
                 <TableHead>Account Status</TableHead>
               </TableRow>
             </TableHeader>
@@ -59,48 +55,24 @@ const ManageUsers = () => {
                 <TableRow key={index}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
-                    <Avatar>
+                    <Avatar className="h-20 w-20">
                       <AvatarImage
-                        src="https://github.com/shadcn.png"
-                        alt="@shadcn"
+                        src={user?.photo || "https://static.vecteezy.com/system/resources/thumbnails/034/210/207/small/3d-cartoon-baby-genius-photo.jpg"}
+                        alt={user?.name}
+                        
                         className="w-10 h-10 rounded-full"
                       />
-                      <AvatarFallback>CN</AvatarFallback>
+                      <AvatarFallback>{user.name}</AvatarFallback>
                     </Avatar>
                   </TableCell>
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
-                  <TableCell>{user.age || "Not provided"}</TableCell>
                   <TableCell>
                     {user.userStatus == "active" ? "Active" : "Inactive"}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="outline">Edit</Button>
-                      </DialogTrigger>
-
-                      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-6">
-                        <DialogHeader>
-                          <DialogTitle>Edit user</DialogTitle>
-                          <DialogDescription>
-                            Update your user details below.
-                          </DialogDescription>
-                        </DialogHeader>
-
-                        <EditUserForm
-                          user={user}
-                          onSubmit={(updatedData) => {
-                            console.log("Submit updated user:", updatedData);
-                          }}
-                        />
-                      </DialogContent>
-                    </Dialog>
-
-                    <button className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-200 ml-2 cursor-pointer">
-                      Delete
-                    </button>
+                  <TableCell>
+                    <UserActionDialog rowData={user} />
                   </TableCell>
                 </TableRow>
               ))}

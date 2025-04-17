@@ -28,6 +28,12 @@ const Login = () => {
         password: data.password,
       };
       const res = await login(userInfo).unwrap();
+      if (!res.success) {
+        toast.error(res.message || "Ummm! Maybe Invalid Credentials", {
+          id: toastId,
+        });
+        return;
+      }
       const isVerified = verifyToken(res.token);
       const user = res.data as TAuthUser;
       if (isVerified) {
@@ -40,8 +46,9 @@ const Login = () => {
       } else {
         navigate("/");
       }
-    } catch (err) {
-      toast.error("Ummm! Maybe Invalid Credentials", {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any | unknown) {
+      toast.error( err?.data?.message ||  "Umm! Something went wrong", {
         id: toastId,
       });
       console.error("Login error:", err);
