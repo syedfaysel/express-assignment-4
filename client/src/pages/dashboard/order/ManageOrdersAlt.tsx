@@ -46,11 +46,16 @@ import {
 } from "@/components/ui/select";
 import { OrderResponseDto, TOrder } from "@/dto/orderDto";
 import { useGetOrdersQuery } from "@/redux/features/order/orderApi";
+import EditOrderForm from "./EditOrderForm";
+import FormatTaka from "@/components/FormatTaka";
 
 export default function ManageOrdersPage() {
-  const { data, isLoading : isGetLoading, isError: isGetError } = useGetOrdersQuery({});
+  const {
+    data,
+    isLoading: isGetLoading,
+    isError: isGetError,
+  } = useGetOrdersQuery({});
   const orders: OrderResponseDto[] = data?.data || [];
-
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<TOrder["status"] | "all">(
@@ -79,8 +84,8 @@ export default function ManageOrdersPage() {
         return <Badge variant="outline">Pending</Badge>;
       case "processing":
         return <Badge variant="secondary">Processing</Badge>;
-      case "shipped":
-        return <Badge variant="default">Shipped</Badge>;
+      case "shipping":
+        return <Badge variant="default">Shipping</Badge>;
       case "delivered":
         return (
           <Badge
@@ -113,7 +118,9 @@ export default function ManageOrdersPage() {
         <Card>
           <CardHeader>
             <CardTitle>Loading...</CardTitle>
-            <CardDescription>Please wait while fetching orders.</CardDescription>
+            <CardDescription>
+              Please wait while fetching orders.
+            </CardDescription>
           </CardHeader>
         </Card>
       </div>
@@ -166,7 +173,7 @@ export default function ManageOrdersPage() {
               <SelectItem value="all">All Orders</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
               <SelectItem value="processing">Processing</SelectItem>
-              <SelectItem value="shipped">Shipped</SelectItem>
+              <SelectItem value="shipping">Shipping</SelectItem>
               <SelectItem value="delivered">Delivered</SelectItem>
               <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
@@ -177,9 +184,7 @@ export default function ManageOrdersPage() {
       <Card>
         <CardHeader>
           <CardTitle>Order History</CardTitle>
-          <CardDescription>
-            View and manage all your past orders
-          </CardDescription>
+          <CardDescription>View and manage all past orders</CardDescription>
         </CardHeader>
         <CardContent>
           {filteredOrders.length > 0 ? (
@@ -197,7 +202,7 @@ export default function ManageOrdersPage() {
                   <TableHead>Payment</TableHead>
                   <TableHead>Items</TableHead>
                   <TableHead className="text-right">Total</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -227,14 +232,15 @@ export default function ManageOrdersPage() {
                     </TableCell>
                     <TableCell>{order.products.length} item(s)</TableCell>
                     <TableCell className="text-right">
-                      ${order.totalAmount.toFixed(2)}
+                      <FormatTaka amount={order.totalAmount} />
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-center space-x-3">
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
                             variant="ghost"
                             size="icon"
+                            className="hover:bg-transparent"
                           >
                             <Eye className="h-4 w-4" />
                             <span className="sr-only">View order details</span>
@@ -419,6 +425,7 @@ export default function ManageOrdersPage() {
                           </div>
                         </DialogContent>
                       </Dialog>
+                      <EditOrderForm order={order} />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -431,7 +438,7 @@ export default function ManageOrdersPage() {
               <p className="text-muted-foreground mt-1">
                 {searchQuery || statusFilter !== "all"
                   ? "Try adjusting your search or filter criteria"
-                  : "You haven't placed any orders yet"}
+                  : "There is no orders yet"}
               </p>
             </div>
           )}

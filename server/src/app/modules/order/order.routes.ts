@@ -11,7 +11,7 @@ router.get('/:id', auth('admin'), orderControllers.getOrderById); // get order b
 router.post('/success/:id', orderControllers.updatePayment);
 router.post('/fail/:id', orderControllers.failedOrCanceledOrder);
 router.post('/cancel/:id', orderControllers.failedOrCanceledOrder);
-router.patch('/:id', auth('admin'), orderControllers.updatePayment); // update payment status, or other fields
+router.patch('/:id', auth('admin'), orderControllers.updateOrder); // update payment status, or other fields
 router.delete('/:id', auth('admin'), orderControllers.updatePayment); // delete order
 
 export const OrderRoutes = router;

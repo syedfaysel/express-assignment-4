@@ -35,7 +35,8 @@ const getOrderById = async (id: string) => {
 };
 
 const updateOrder = async (id: string, data: Partial<IOrder>) => {
-  const result = await Order.updateOne({ _id: id }, { $set: data });
+  const result = await Order.findByIdAndUpdate(id, { $set: { ...data } }, { new: true });
+
   return result;
 };
 

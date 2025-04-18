@@ -82,8 +82,8 @@ export default function ViewOrdersPage() {
         return <Badge variant="outline">Pending</Badge>;
       case "processing":
         return <Badge variant="secondary">Processing</Badge>;
-      case "shipped":
-        return <Badge variant="default">Shipped</Badge>;
+      case "shipping":
+        return <Badge variant="default">Shipping</Badge>;
       case "delivered":
         return (
           <Badge
@@ -155,7 +155,7 @@ export default function ViewOrdersPage() {
               <SelectItem value="all">All Orders</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
               <SelectItem value="processing">Processing</SelectItem>
-              <SelectItem value="shipped">Shipped</SelectItem>
+              <SelectItem value="shipping">Shipping</SelectItem>
               <SelectItem value="delivered">Delivered</SelectItem>
               <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>

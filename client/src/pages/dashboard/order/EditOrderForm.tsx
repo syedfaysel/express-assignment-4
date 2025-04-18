@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -9,61 +10,99 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TOrder } from "@/dto/orderDto";
+import { useUpdateOrderStatusMutation } from "@/redux/features/order/orderApi";
+import { toast } from "sonner";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 type Props = {
   order: TOrder;
-  onSubmit: (data: Partial<TOrder>) => void;
 };
 
-const EditOrderForm = ({ order, onSubmit }: Props) => {
-  const [formData, setFormData] = useState({
-    status: order.status || "pending",
-  });
+const EditOrderForm = ({ order }: Props) => {
+  const [updateOrderStatus, { isLoading: isOrderUpdateLoading }] =
+    useUpdateOrderStatusMutation();
 
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setFormData({ ...formData, [e.target.name]: e.target.value });
-  // };
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [status, setStatus] = useState<TOrder["status"]>(
+    order.status || "pending"
+  );
 
-  const handleSelectChange = (field: "role" | "status", value: string) => {
-    setFormData({ ...formData, [field]: value });
-  };
+  const handleSubmit = async () => {
+    try {
+      const res = await updateOrderStatus({
+        id: order._id!,
+        data: { status },
+      }).unwrap();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
+      if (res?.success) {
+        toast.success("Order status updated successfully!");
+      } else {
+        toast.info(res.message || "Something went wrong!");
+      }
+    } catch (error: any) {
+      toast.error(error?.message || "Something went wrong!");
+    }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4"
+    <Dialog
+      open={isDialogOpen}
+      onOpenChange={setIsDialogOpen}
     >
-      {/*Udpate Order Status */}
-      <Label htmlFor="Status">Status</Label>
-      <Select
-        value={formData.status}
-        onValueChange={(val) => handleSelectChange("status", val)}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Select status" />
-        </SelectTrigger>
-        <SelectContent className="space-y-4">
-          <SelectItem value="pending">Pending</SelectItem>
-          <SelectItem value="processing">Processing</SelectItem>
-          <SelectItem value="shipped">Shipped</SelectItem>
-          <SelectItem value="delivered">Delivered</SelectItem>
-          <SelectItem value="cancelled">Cancelled</SelectItem>
-        </SelectContent>
-      </Select>
-
-      {/* Submit Button */}
-      <Button
-        type="submit"
-        className="w-full"
-      >
-        Save Changes
-      </Button>
-    </form>
+      <DialogTrigger asChild>
+        <Button variant="outline">Update Status</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogTitle className="text-center font-semibold text-lg">
+          Update Order
+        </DialogTitle>
+        <div className="text-center text-gray-500 mb-4">
+          <span>Order Number: {order.orderNumber}</span>
+          <br />
+          <span>Transaction ID: {order.transactionId}</span>
+        </div>
+        <div className="space-y-4 w-full items-center">
+          <Label htmlFor="status">Order Status</Label>
+          <Select
+            value={status}
+            onValueChange={(val) => setStatus(val as TOrder["status"])}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent className="w-full">
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="processing">Processing</SelectItem>
+              <SelectItem value="shipping">Shipping</SelectItem>
+              <SelectItem value="delivered">Delivered</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <DialogFooter className="flex gap-2 mt-4">
+          <Button
+            variant={"outline"}
+            disabled={isOrderUpdateLoading}
+            onClick={() => setIsDialogOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={isOrderUpdateLoading || status === order.status}
+          >
+            {isOrderUpdateLoading ? "Updating..." : "Update"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

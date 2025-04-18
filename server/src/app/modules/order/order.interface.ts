@@ -12,7 +12,7 @@ export interface IOrder {
   couponCode?: string;
   // Order number for human reference (e.g., #2025-00123)
   orderNumber?: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'processing' | 'shipping' | 'delivered' | 'cancelled';
   trackingNumber: string | null;
   deliveryService?: string;
   transactionId: string;
