@@ -48,6 +48,7 @@ import { OrderResponseDto, TOrder } from "@/dto/orderDto";
 import { useGetUserOrdersQuery } from "@/redux/features/order/orderApi";
 import { useAppSelector } from "@/redux/hooks";
 import { selectUser } from "@/redux/features/auth/authSlice";
+import FormatTaka from "@/components/FormatTaka";
 
 export default function ViewOrdersPage() {
   const user = useAppSelector(selectUser);
@@ -216,7 +217,7 @@ export default function ViewOrdersPage() {
                     </TableCell>
                     <TableCell>{order.products.length} item(s)</TableCell>
                     <TableCell className="text-right">
-                      ${order.totalAmount.toFixed(2)}
+                      <FormatTaka amount={order.totalAmount}/>
                     </TableCell>
                     <TableCell className="text-right">
                       <Dialog>
@@ -269,13 +270,13 @@ export default function ViewOrdersPage() {
                               <div className="text-left sm:text-right">
                                 <h3 className="font-semibold text-lg">Total</h3>
                                 <p className="text-2xl font-bold">
-                                  ${order.totalAmount.toFixed(2)}
+                                  <FormatTaka amount={order.totalAmount}/>
                                 </p>
                                 {order.shippingCost !== undefined && (
                                   <p className="text-sm text-muted-foreground">
                                     {order.shippingCost === 0
                                       ? "Free Shipping"
-                                      : `Shipping: $${order.shippingCost.toFixed(
+                                      : `Shipping: ${order.shippingCost.toFixed(
                                           2
                                         )}`}
                                   </p>
@@ -382,14 +383,11 @@ export default function ViewOrdersPage() {
                                       </div>
                                     </div>
                                     <div className="text-right">
-                                      <p className="font-medium">
-                                        ${item.price.toFixed(2)}
-                                      </p>
                                       <p className="text-sm text-muted-foreground">
-                                        $
-                                        {(item.price * item.quantity).toFixed(
-                                          2
-                                        )}
+                                        <FormatTaka amount={item.price}/>
+                                      </p>
+                                      <p className="font-medium">
+                                        <FormatTaka amount={item.price * item.quantity} />{" "}
                                       </p>
                                     </div>
                                   </div>

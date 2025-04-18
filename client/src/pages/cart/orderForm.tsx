@@ -53,7 +53,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
         id="street"
         value={shippingAddress.street}
         onChange={(e) => handleInputChange("street", e.target.value)}
-        placeholder="123 Stationery Lane"
+        placeholder="e.g Ga 124, Badda Road"
       />
       {formErrors.street && (
         <p className="text-red-500 text-sm">Street is required</p>
@@ -64,7 +64,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
         id="city"
         value={shippingAddress.city}
         onChange={(e) => handleInputChange("city", e.target.value)}
-        placeholder="Dhaka"
+        placeholder="e.g Dhaka"
       />
       {formErrors.city && (
         <p className="text-red-500 text-sm">City is required</p>
@@ -75,7 +75,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
         id="postalCode"
         value={shippingAddress.postalCode}
         onChange={(e) => handleInputChange("postalCode", e.target.value)}
-        placeholder="1207"
+        placeholder="e.g 1207"
       />
       {formErrors.postalCode && (
         <p className="text-red-500 text-sm">Postal Code is required</p>
@@ -86,7 +86,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
         id="country"
         value={shippingAddress.country}
         onChange={(e) => handleInputChange("country", e.target.value)}
-        placeholder="Bangladesh"
+        placeholder="e.g Bangladesh"
       />
       {formErrors.country && (
         <p className="text-red-500 text-sm">Country is required</p>
@@ -94,11 +94,11 @@ const OrderForm: React.FC<OrderFormProps> = ({
 
       <Label htmlFor="contactPhone">Contact Phone</Label>
       <Input
-        className="[placeholder:text-sm placeholder:text-gray-400]"
+        className="[placeholder:text-sm placeholder:text-red-200]"
         id="contactPhone"
         value={contactPhone}
         onChange={(e) => handlePhoneChange(e.target.value)}
-        placeholder="+880123456789"
+        placeholder="e.g. +880123456789"
       />
       {formErrors.contactPhone && (
         <p className="text-red-500 text-sm">Contact Phone is required</p>

@@ -45,7 +45,7 @@ const router = createBrowserRouter([
         element: <About></About>,
       },
       {
-        path: "/orders/success/:tranid",
+        path: "/orders/success/:trxId",
         element: (
           <ProtectedRoute roles={["admin", "user"]}>
             <PaymentSuccess />
@@ -53,7 +53,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/orders/fail/:tranid",
+        path: "/orders/fail/:trxId",
         element: (
           <ProtectedRoute roles={["admin", "user"]}>
             <PaymentFailed />

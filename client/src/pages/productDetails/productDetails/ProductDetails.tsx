@@ -6,7 +6,6 @@ import { useParams } from "react-router-dom";
 import { useGetSingleProductQuery } from "@/redux/features/proudct/productApi";
 import { productDto } from "@/dto/productDto";
 
-
 const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>();
   const dispatch = useAppDispatch();
@@ -22,15 +21,14 @@ const ProductDetails = () => {
   if (isError) return <div>Error loading product</div>;
 
   const product: productDto = data?.data;
+  const needsSize = product.sizes?.length;
+  const needsColor = product.colors?.length;
 
   const notify = () => {
     toast.success("Item added to cart!");
   };
 
   const handleAddToCart = () => {
-    const needsSize = product.sizes?.length;
-    const needsColor = product.colors?.length;
-  
     if ((needsSize && !selectedSize) || (needsColor && !selectedColor)) {
       setShowError(true);
       document.getElementById("sizesGrid")?.scrollIntoView({
@@ -39,9 +37,9 @@ const ProductDetails = () => {
       });
       return; // stop execution if validation fails
     }
-  
+
     setShowError(false);
-  
+
     const cartItem = {
       productId: product._id!,
       name: product.name,
@@ -52,12 +50,21 @@ const ProductDetails = () => {
       oneQuantityPrice: product.price,
       price: product.price * quantity,
     };
-  
+
     dispatch(addToCart(cartItem));
     notify();
   };
-  
-  
+
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
+    if (value < 1) {
+      setQuantity(1);
+    } else if (value > product.stock) {
+      setQuantity(product.stock);
+    } else {
+      setQuantity(value);
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 font-[josefin-sans]">
@@ -93,64 +100,75 @@ const ProductDetails = () => {
                   product.stock > 0 ? "text-green-600" : "text-red-600"
                 }
               >
-                {product.stock > 0 ? "In Stock" : "Out of Stock"}
+                {product.stock > 0
+                  ? `In Stock (${product.stock})`
+                  : "Out of Stock"}
               </span>
             </p>
           </div>
 
           <div
             id="sizesGrid"
-            className="flex gap-4"
+            className="flex flex-wrap gap-4"
           >
-            <select
-              onChange={(e) => setSelectedSize(e.target.value)}
-              defaultValue=""
-              className="border px-3 py-1 rounded"
-            >
-              <option
-                value=""
-                disabled
+            {needsSize ? (
+              <select
+                onChange={(e) => setSelectedSize(e.target.value)}
+                defaultValue=""
+                className="border px-3 py-1 rounded"
               >
-                Select Size
-              </option>
-              {product.sizes?.map((size) => (
                 <option
-                  key={size}
-                  value={size}
+                  value=""
+                  disabled
                 >
-                  {size}
+                  Select Size
                 </option>
-              ))}
-            </select>
+                {product.sizes?.map((color) => (
+                  <option
+                    key={color}
+                    value={color}
+                  >
+                    {color}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              ""
+            )}
 
-            <select
-              onChange={(e) => setSelectedColor(e.target.value)}
-              defaultValue=""
-              className="border px-3 py-1 rounded"
-            >
-              <option
-                value=""
-                disabled
+            {needsColor ? (
+              <select
+                onChange={(e) => setSelectedColor(e.target.value)}
+                defaultValue=""
+                className="border px-3 py-1 rounded"
               >
-                Select Color
-              </option>
-              {product.colors?.map((color) => (
                 <option
-                  key={color}
-                  value={color}
+                  value=""
+                  disabled
                 >
-                  {color}
+                  Select Color
                 </option>
-              ))}
-            </select>
+                {product.colors?.map((color) => (
+                  <option
+                    key={color}
+                    value={color}
+                  >
+                    {color}
+                  </option>
+                ))}
+              </select>
+            ): ("")}
 
-            <input
-              type="number"
-              min={1}
-              value={quantity as number}
-              onChange={(e) => setQuantity(parseInt(e.target.value))}
-              className="w-16 border px-2 py-1 rounded"
-            />
+            <div className="flex items-center gap-2">
+              <p className="font-extrabold">Quantity:</p>
+              <input
+                type="number"
+                min={1}
+                value={quantity as number}
+                onChange={(e) => handleQuantityChange(e)}
+                className="w-16 border px-2 py-1 rounded"
+              />
+            </div>
           </div>
 
           {showError && (

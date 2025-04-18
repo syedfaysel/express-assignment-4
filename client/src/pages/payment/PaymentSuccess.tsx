@@ -1,7 +1,12 @@
+import { Button } from "@/components/ui/button";
 import Wrapper from "@/layout/Wrapper";
-import { Link } from "react-router-dom";
+import { ShoppingBag } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 
 const PaymentSuccess = () => {
+
+  const { trxId } = useParams<{ trxId: string }>();
+  console.log("Transaction ID:", trxId);
   return (
     <div className="min-h-[650px] flex items-center">
       <Wrapper>
@@ -15,12 +20,22 @@ const PaymentSuccess = () => {
           </div>
           <div className="underline">stationary.bd@gmail.com</div>
 
-          <Link
-            to="/"
-            className="font-bold mt-5 text-blue-500 hover:text-blue-700"
-          >
-            Continue Shopping
-          </Link>
+          <div className="text-base mt-5 flex gap-5 items-center">
+            <Link
+              to="/dashboard/view-orders"
+              className="font-bold mt-5 text-blue-500 hover:text-blue-700 cursor-pointer"
+            >
+              <Button className="cursor-pointer">
+                <ShoppingBag className="mr-2" size={20} /> View Orders
+              </Button>
+            </Link>
+            <Link
+              to="/"
+              className="font-bold mt-5 text-blue-500 hover:text-blue-700"
+            >
+              Continue Shopping
+            </Link>
+          </div>
         </div>
       </Wrapper>
     </div>

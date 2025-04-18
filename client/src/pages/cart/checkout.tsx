@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Wrapper from "@/layout/Wrapper";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -8,11 +8,22 @@ import { toast } from "sonner";
 import { useCreateOrderMutation } from "@/redux/features/order/orderApi";
 import { selectUser, TShippingAddress } from "@/redux/features/auth/authSlice";
 import OrderForm from "./orderForm";
+import { useGetUserByIdQuery } from "@/redux/features/user/userApi";
+import { useGetProductsQuery } from "@/redux/features/proudct/productApi";
+import { productDto } from "@/dto/productDto";
 
 const Checkout = () => {
-
   const dispatch = useAppDispatch();
-  const user = useAppSelector(selectUser);
+  const loggedUser = useAppSelector(selectUser);
+  const userId = loggedUser?.id as string;
+  const { data: userData } = useGetUserByIdQuery(userId);
+  const user = userData?.data;
+
+  const { data: productsData } = useGetProductsQuery(
+    {}
+  );
+  const products: productDto[] = productsData?.data;
+
   const cartItems = useAppSelector(selectCartItems);
   const [location, setLocation] = useState("dhaka");
   const [charge, setCharge] = useState(80);
@@ -38,6 +49,17 @@ const Checkout = () => {
     contactPhone: false,
   });
 
+  useEffect(() => {
+    if (user) {
+      setShippingAddress({
+        street: user.shippingAddress?.street || "",
+        city: user.shippingAddress?.city || "",
+        postalCode: user.shippingAddress?.postalCode || "",
+        country: user.shippingAddress?.country || "",
+      });
+    }
+  }, [user]);
+
   // Validation function
   const validateForm = () => {
     const errors = {
@@ -62,11 +84,16 @@ const Checkout = () => {
       return;
     }
 
+    const isStockValid = await validateStockBeforeOrder();
+    if (!isStockValid) {
+      return;
+    }
+
     try {
-      const toastId = toast.loading("Order Processing");
+      const toastId = toast.loading("Initiating order...");
 
       const order = {
-        userId: user?.id as string,
+        userId: user?._id as string,
         products: cartItems.map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
@@ -99,6 +126,24 @@ const Checkout = () => {
       toast.error("Something went wrong. Please try again later.");
       console.log("error", error);
     }
+  };
+
+  const validateStockBeforeOrder = async () => {
+    if (!products) {
+      toast.error("Error checking stock. Please try again later.");
+      return false;
+    }
+
+    // Check if products are available in stock
+    for (const item of cartItems) {
+      const product = products.find((p) => p._id === item.productId);
+      if (!product || product.stock < item.quantity) {
+        toast.error(`Insufficient stock for ${item.name}`);
+        return false;
+      }
+    }
+
+    return true;
   };
 
   if (isError) {
