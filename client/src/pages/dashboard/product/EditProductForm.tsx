@@ -104,7 +104,7 @@ const EditUserForm = ({ product, setIsOpen }: Props) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-6 overflow-y-auto"
         >
-          <div className="w-full grid grid-cols-2 gap-4 text-black">
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 text-black">
             <FormField
               control={form.control}
               name="name"

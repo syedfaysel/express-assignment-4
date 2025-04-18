@@ -40,6 +40,11 @@ const updateOrder = async (id: string, data: Partial<IOrder>) => {
   return result;
 };
 
+const deleteOrder = async (id: string) => {
+  const result = await Order.findByIdAndDelete(id);
+  return result;
+};
+
 export const orderServices = {
   createOrderIntoDB,
   updatePaymentStatus,
@@ -47,4 +52,5 @@ export const orderServices = {
   getUserOrdersFromDB,
   getOrderById,
   updateOrder,
+  deleteOrder,
 };

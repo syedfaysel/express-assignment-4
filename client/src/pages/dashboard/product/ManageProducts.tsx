@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/dialog";
 import {
   useCreateProductMutation,
-  useDeleteProductMutation,
   useGetProductsQuery,
 } from "@/redux/features/proudct/productApi";
 
@@ -27,30 +26,31 @@ import AddProductForm from "./AddProductForm";
 import { useState } from "react";
 import { toast } from "sonner";
 import ProductActionDialog from "./ProductActionDialog";
+import Loader from "@/components/Loader";
+import DeleteProductDialog from "./DeleteProductDialog";
 
 const ManageProducts = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const {
     data,
-    refetch,
     isError: isProductsError,
     isLoading: isProductsLoading,
   } = useGetProductsQuery({});
 
   const [createProduct] = useCreateProductMutation();
 
-  const [deleteProduct, { isLoading: isDeleteLoading }] =
-    useDeleteProductMutation();
-
-  if (isProductsLoading) return <div>Loading...</div>;
+  if (isProductsLoading)
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
   if (isProductsError) return <div>Error loading products</div>;
   const products: productDto[] = data?.data || [];
 
   const handleAddProduct = async (newProduct: Partial<productDto>) => {
     try {
-      console.log("Submit new product:", newProduct);
       const res = await createProduct(newProduct).unwrap();
       if (res.success) {
         toast.success(res.message || "Product added successfully!");
@@ -61,23 +61,6 @@ const ManageProducts = () => {
     } catch (error) {
       console.error("Error adding product:", error);
       toast.error("Failed to add product. Please try again.");
-    }
-  };
-
-  const handleDelete = async (productId: string) => {
-    try {
-      const res = await deleteProduct(productId).unwrap();
-      if (res.success) {
-        toast.success(res.message || "Product deleted successfully!");
-        refetch();
-      } else {
-        toast.info(res.message || "Failed to delete product");
-      }
-    } catch (error) {
-      console.error("Error deleting product:", error);
-      toast.error("Failed to delete product. Please try again.");
-    } finally {
-      setIsDeleteOpen(false);
     }
   };
 
@@ -147,44 +130,7 @@ const ManageProducts = () => {
                 <TableCell className="text-right">
                   <ProductActionDialog rowData={product} />
                   {/* Delete Dialog */}
-                  <Dialog
-                    open={isDeleteOpen}
-                    onOpenChange={setIsDeleteOpen}
-                  >
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        className="ml-2"
-                      >
-                        Delete
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Are you sure?</DialogTitle>
-                        <DialogDescription>
-                          This action cannot be undone.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="flex justify-between mt-4">
-                        <Button
-                          variant="outline"
-                          onClick={() => setIsDeleteOpen(false)}
-                          className="cursor-pointer"
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          onClick={() => handleDelete(product._id!)}
-                          disabled={isDeleteLoading}
-                          className="cursor-pointer hover:bg-red-800"
-                        >
-                          {isDeleteLoading ? "Deleting..." : "Confirm Delete"}
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                  <DeleteProductDialog product={product} />
                 </TableCell>
               </TableRow>
             ))}

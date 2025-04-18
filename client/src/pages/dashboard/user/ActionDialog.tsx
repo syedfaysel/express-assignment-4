@@ -25,7 +25,7 @@ const UserActionDialog = ({ rowData }: {rowData: userDto}) => {
           <Eye size={64} />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] w-auto max-h-full overflow-y-auto my-4">
+      <DialogContent className="w-full max-w-sm sm:max-w-xl max-h-[90vh] overflow-y-auto md:p-6 rounded-xl">
         <DialogHeader>
           <DialogTitle className="text-xl text-teal-800 text-center">{dialogTitle}</DialogTitle>
           <DialogDescription className="text-center text-muted-foreground">

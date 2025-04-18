@@ -13,6 +13,7 @@ import { useGetUsersQuery } from "@/redux/features/user/userApi";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { userDto } from "@/dto/userDto";
 import UserActionDialog from "./ActionDialog";
+import Loader from "@/components/Loader";
 
 const ManageUsers = () => {
   const {
@@ -21,7 +22,7 @@ const ManageUsers = () => {
     isLoading: isUsersLoading,
   } = useGetUsersQuery({});
 
-  if (isUsersLoading) return <div>Loading...</div>;
+  if (isUsersLoading) return <Loader/>
   if (isUsersError) return <div>Error loading users</div>;
 
   const users: userDto[] = data?.data || [];

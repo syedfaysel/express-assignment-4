@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useAppDispatch } from "@/redux/hooks";
 import { addToCart } from "@/redux/features/cart/cartSlice";
 import { toast } from "sonner";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useGetSingleProductQuery } from "@/redux/features/proudct/productApi";
 import { productDto } from "@/dto/productDto";
+import FormatTaka from "@/components/FormatTaka";
+import { ShoppingBag } from "lucide-react";
 
 const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>();
@@ -16,6 +18,7 @@ const ProductDetails = () => {
   const [showError, setShowError] = useState<boolean>(false);
 
   const { data, isError, isLoading } = useGetSingleProductQuery({ productId });
+  const navigate = useNavigate();
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading product</div>;
@@ -24,8 +27,18 @@ const ProductDetails = () => {
   const needsSize = product.sizes?.length;
   const needsColor = product.colors?.length;
 
+
+
   const notify = () => {
-    toast.success("Item added to cart!");
+    toast.success("Checkout Cart", {
+      description: `${product.name} has been added`,
+      duration: 3000,
+      icon: <ShoppingBag className="m-4"/>,
+      action: {
+        label: "Go to Cart",
+        onClick: () => navigate("/cart"),
+      },
+    });
   };
 
   const handleAddToCart = () => {
@@ -57,7 +70,7 @@ const ProductDetails = () => {
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
-    if (value < 1) {
+    if (value < 1 || isNaN(value)) {
       setQuantity(1);
     } else if (value > product.stock) {
       setQuantity(product.stock);
@@ -83,7 +96,8 @@ const ProductDetails = () => {
 
           <div className="text-lg text-gray-700">
             <p>
-              <span className="font-extrabold">Price:</span> ${product.price}
+              <span className="font-extrabold">Price:</span>{" "}
+              <FormatTaka amount={product.price} />
             </p>
             <p>
               <span className="font-extrabold">Category:</span>{" "}
@@ -157,7 +171,9 @@ const ProductDetails = () => {
                   </option>
                 ))}
               </select>
-            ): ("")}
+            ) : (
+              ""
+            )}
 
             <div className="flex items-center gap-2">
               <p className="font-extrabold">Quantity:</p>

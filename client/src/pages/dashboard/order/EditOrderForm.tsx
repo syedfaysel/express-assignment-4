@@ -34,7 +34,7 @@ const EditOrderForm = ({ order }: Props) => {
     order.status || "pending"
   );
 
-  const handleSubmit = async () => {
+  const handleUpdate = async () => {
     try {
       const res = await updateOrderStatus({
         id: order._id!,
@@ -43,6 +43,7 @@ const EditOrderForm = ({ order }: Props) => {
 
       if (res?.success) {
         toast.success("Order status updated successfully!");
+        setIsDialogOpen(false);
       } else {
         toast.info(res.message || "Something went wrong!");
       }
@@ -95,7 +96,7 @@ const EditOrderForm = ({ order }: Props) => {
             Cancel
           </Button>
           <Button
-            onClick={handleSubmit}
+            onClick={handleUpdate}
             disabled={isOrderUpdateLoading || status === order.status}
           >
             {isOrderUpdateLoading ? "Updating..." : "Update"}

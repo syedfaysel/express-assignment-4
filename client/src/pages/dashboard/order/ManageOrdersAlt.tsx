@@ -48,6 +48,7 @@ import { OrderResponseDto, TOrder } from "@/dto/orderDto";
 import { useGetOrdersQuery } from "@/redux/features/order/orderApi";
 import EditOrderForm from "./EditOrderForm";
 import FormatTaka from "@/components/FormatTaka";
+import DeleteOrderDialog from "./DeleteOrderDialog";
 
 export default function ManageOrdersPage() {
   const {
@@ -235,6 +236,7 @@ export default function ManageOrdersPage() {
                       <FormatTaka amount={order.totalAmount} />
                     </TableCell>
                     <TableCell className="text-center space-x-3">
+                      {/* view */}
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
@@ -425,7 +427,10 @@ export default function ManageOrdersPage() {
                           </div>
                         </DialogContent>
                       </Dialog>
+                      {/* edit */}
                       <EditOrderForm order={order} />
+                      {/* Delete Dialog */}
+                      <DeleteOrderDialog order={order} />
                     </TableCell>
                   </TableRow>
                 ))}

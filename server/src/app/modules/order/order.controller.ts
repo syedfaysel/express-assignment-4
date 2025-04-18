@@ -157,6 +157,36 @@ const updateOrder = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const deleteOrder = catchAsync(async (req: Request, res: Response) => {
+  const orderId = req.params.id;
+
+  if (!mongoose.Types.ObjectId.isValid(orderId)) {
+    return sendResponse(res, {
+      success: false,
+      statusCode: StatusCodes.BAD_REQUEST,
+      message: 'Invalid order ID',
+      data: null,
+    });
+  }
+  const result = await orderServices.deleteOrder(orderId);
+
+  if (result) {
+    sendResponse(res, {
+      success: true,
+      statusCode: StatusCodes.OK,
+      message: 'Order deleted successfully',
+      data: result,
+    });
+  } else {
+    sendResponse(res, {
+      success: false,
+      statusCode: StatusCodes.NOT_FOUND,
+      message: 'Order not found',
+      data: null,
+    });
+  }
+});
+
 export const orderControllers = {
   createOrder,
   updatePayment,
@@ -165,4 +195,5 @@ export const orderControllers = {
   getUserOrders,
   getOrderById,
   updateOrder,
+  deleteOrder,
 };

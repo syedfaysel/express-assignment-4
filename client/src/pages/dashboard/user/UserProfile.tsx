@@ -126,12 +126,12 @@ export default function UserProfile({ id, user }: Props) {
     }));
   };
 
-  const handleSave = () => {
+  const handleSave = async() => {
     try {
-      const data = updateUser({ id: id!, data: formData });
-      console.log("User updated successfully:", data);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const res = await updateUser({ id: id!, data: formData });
 
-      toast.success("User updated successfully!");
+      toast.success("User updated successfully");
       setIsEditing(false);
     } catch (error) {
       console.log("Error updating user:", error);
