@@ -24,6 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Edit } from "lucide-react";
 import { productDto } from "@/dto/productDto";
 import { useUpdateProductMutation } from "@/redux/features/proudct/productApi";
+import { Textarea } from "@/components/ui/textarea";
 
 const productFormSchema = z.object({
   name: z.string().min(1),
@@ -89,7 +90,7 @@ const EditUserForm = ({ product, setIsOpen }: Props) => {
       } else {
         toast.error(res?.message || "Product not updated");
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       // Handle error
       console.error("Error updating product:", error);
@@ -139,7 +140,18 @@ const EditUserForm = ({ product, setIsOpen }: Props) => {
                 <FormItem>
                   <FormLabel>Images</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Textarea
+                      placeholder="Enter image URLs separated by commas"
+                      value={field.value?.join(", ") || ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value
+                            .split(",")
+                            .map((s) => s.trim())
+                            .filter((s) => s !== "")
+                        )
+                      }
+                    />
                   </FormControl>
                 </FormItem>
               )}
