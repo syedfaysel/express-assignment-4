@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useAppDispatch } from "@/redux/hooks";
 import { addToCart } from "@/redux/features/cart/cartSlice";
 import { toast } from "sonner";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useGetSingleProductQuery } from "@/redux/features/proudct/productApi";
 import { productDto } from "@/dto/productDto";
-
+import FormatTaka from "@/components/FormatTaka";
+import { ShoppingBag } from "lucide-react";
 
 const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>();
@@ -17,26 +18,37 @@ const ProductDetails = () => {
   const [showError, setShowError] = useState<boolean>(false);
 
   const { data, isError, isLoading } = useGetSingleProductQuery({ productId });
+  const navigate = useNavigate();
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading product</div>;
 
   const product: productDto = data?.data;
+  const needsSize = product.sizes?.length;
+  const needsColor = product.colors?.length;
+
+
 
   const notify = () => {
-    toast.success("Item added to cart!");
+    toast.success("Checkout Cart", {
+      description: `${product.name} has been added`,
+      duration: 3000,
+      icon: <ShoppingBag className="m-4"/>,
+      action: {
+        label: "Go to Cart",
+        onClick: () => navigate("/cart"),
+      },
+    });
   };
 
   const handleAddToCart = () => {
-    if (
-      (product.sizes  && !selectedSize) ||
-      (product.colors && !selectedColor)
-    ) {
+    if ((needsSize && !selectedSize) || (needsColor && !selectedColor)) {
       setShowError(true);
       document.getElementById("sizesGrid")?.scrollIntoView({
         block: "center",
         behavior: "smooth",
       });
+      return; // stop execution if validation fails
     }
 
     setShowError(false);
@@ -47,12 +59,24 @@ const ProductDetails = () => {
       image: product.images[0],
       selectedSize,
       selectedColor,
+      quantity,
       oneQuantityPrice: product.price,
+      price: product.price * quantity,
     };
 
     dispatch(addToCart(cartItem));
-    console.log("something wrong", cartItem);
     notify();
+  };
+
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
+    if (value < 1 || isNaN(value)) {
+      setQuantity(1);
+    } else if (value > product.stock) {
+      setQuantity(product.stock);
+    } else {
+      setQuantity(value);
+    }
   };
 
   return (
@@ -72,7 +96,8 @@ const ProductDetails = () => {
 
           <div className="text-lg text-gray-700">
             <p>
-              <span className="font-extrabold">Price:</span> ${product.price}
+              <span className="font-extrabold">Price:</span>{" "}
+              <FormatTaka amount={product.price} />
             </p>
             <p>
               <span className="font-extrabold">Category:</span>{" "}
@@ -89,64 +114,77 @@ const ProductDetails = () => {
                   product.stock > 0 ? "text-green-600" : "text-red-600"
                 }
               >
-                {product.stock > 0 ? "In Stock" : "Out of Stock"}
+                {product.stock > 0
+                  ? `In Stock (${product.stock})`
+                  : "Out of Stock"}
               </span>
             </p>
           </div>
 
           <div
             id="sizesGrid"
-            className="flex gap-4"
+            className="flex flex-wrap gap-4"
           >
-            <select
-              onChange={(e) => setSelectedSize(e.target.value)}
-              defaultValue=""
-              className="border px-3 py-1 rounded"
-            >
-              <option
-                value=""
-                disabled
+            {needsSize ? (
+              <select
+                onChange={(e) => setSelectedSize(e.target.value)}
+                defaultValue=""
+                className="border px-3 py-1 rounded"
               >
-                Select Size
-              </option>
-              {product.sizes?.map((size) => (
                 <option
-                  key={size}
-                  value={size}
+                  value=""
+                  disabled
                 >
-                  {size}
+                  Select Size
                 </option>
-              ))}
-            </select>
+                {product.sizes?.map((color) => (
+                  <option
+                    key={color}
+                    value={color}
+                  >
+                    {color}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              ""
+            )}
 
-            <select
-              onChange={(e) => setSelectedColor(e.target.value)}
-              defaultValue=""
-              className="border px-3 py-1 rounded"
-            >
-              <option
-                value=""
-                disabled
+            {needsColor ? (
+              <select
+                onChange={(e) => setSelectedColor(e.target.value)}
+                defaultValue=""
+                className="border px-3 py-1 rounded"
               >
-                Select Color
-              </option>
-              {product.colors?.map((color) => (
                 <option
-                  key={color}
-                  value={color}
+                  value=""
+                  disabled
                 >
-                  {color}
+                  Select Color
                 </option>
-              ))}
-            </select>
+                {product.colors?.map((color) => (
+                  <option
+                    key={color}
+                    value={color}
+                  >
+                    {color}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              ""
+            )}
 
-            <input
-              type="number"
-              min={1}
-              value={quantity}
-              onChange={(e) => setQuantity(parseInt(e.target.value))}
-              className="w-16 border px-2 py-1 rounded"
-            />
+            <div className="flex items-center gap-2">
+              <p className="font-extrabold">Quantity:</p>
+              <input
+                type="number"
+                min={1}
+                value={quantity as number}
+                onChange={(e) => handleQuantityChange(e)}
+                className="w-16 border px-2 py-1 rounded"
+              />
+            </div>
           </div>
 
           {showError && (

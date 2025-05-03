@@ -1,175 +1,262 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { productDto } from "@/dto/productDto";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-type EditProductFormProps = {
+import { toast } from "sonner";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Edit } from "lucide-react";
+import { productDto } from "@/dto/productDto";
+import { useUpdateProductMutation } from "@/redux/features/proudct/productApi";
+import { Textarea } from "@/components/ui/textarea";
+
+const productFormSchema = z.object({
+  name: z.string().min(1),
+  price: z.coerce.number().min(0),
+  description: z.string().optional(),
+  category: z.string().optional(),
+  stock: z.coerce.number().min(0),
+  brand: z.string().optional(),
+  isFeatured: z.boolean().optional(),
+  images: z.array(z.string()).optional(),
+});
+
+type ProductFormValues = z.infer<typeof productFormSchema>;
+
+type Props = {
   product: productDto;
-  onSubmit: (updatedProduct: productDto) => void;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const EditProductForm: React.FC<EditProductFormProps> = ({
-  product,
-  onSubmit,
-}) => {
-  const [formData, setFormData] = useState<productDto>({
-    ...product,
-    description: product.description || "",
-    category: product.category || "",
-    brand: product.brand || "",
-    colors: product.colors || [],
-    sizes: product.sizes || [],
-    images: product.images || [],
-    tags: product.tags || [],
+const EditUserForm = ({ product, setIsOpen }: Props) => {
+  const [isEditing, setIsEditing] = useState(true);
+  const [updateProduct, { isLoading: isUpdateLoading }] =
+    useUpdateProductMutation();
+
+  const form = useForm<ProductFormValues>({
+    resolver: zodResolver(productFormSchema),
+    defaultValues: {
+      name: product.name,
+      price: product.price,
+      description: product.description,
+      category: product.category,
+      stock: product.stock,
+      brand: product.brand,
+      isFeatured: product.isFeatured,
+      images: product.images,
+    },
   });
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type, checked } = e.target as HTMLInputElement;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  useEffect(() => {
+    if (product) {
+      form.reset({
+        name: product.name,
+        price: product.price,
+        description: product.description,
+        category: product.category,
+        stock: product.stock,
+        brand: product.brand,
+        isFeatured: product.isFeatured,
+        images: product.images,
+      });
+    }
+  }, [product]);
 
-  const handleArrayChange = (name: keyof productDto, value: string) => {
-    const arr = value.split(",").map((item) => item.trim());
-    setFormData((prev) => ({ ...prev, [name]: arr }));
-  };
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    onSubmit(formData);
+  const onSubmit = async (data: ProductFormValues) => {
+    try {
+      const res = await updateProduct({
+        productId: product._id,
+        data,
+      }).unwrap();
+      if (res?.success) {
+        toast.success("Product updated successfully");
+        setIsOpen(false);
+      } else {
+        toast.error(res?.message || "Product not updated");
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      // Handle error
+      console.error("Error updating product:", error);
+      toast.error(error?.data?.message || "Error updating product");
+    }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-6 p-6 border rounded-xl shadow-md bg-white">
-      <h2 className="text-2xl font-semibold">Edit Product</h2>
+    <div>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 overflow-y-auto"
+        >
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 text-black">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Product Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={!isEditing}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="images"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Images</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Enter image URLs separated by commas"
+                      value={field.value?.join(", ") || ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value
+                            .split(",")
+                            .map((s) => s.trim())
+                            .filter((s) => s !== "")
+                        )
+                      }
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
 
-      {/* Name */}
-      <div className="space-y-2">
-        <Label htmlFor="name">Name</Label>
-        <Input
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
-      </div>
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="w-full disabled:cursor-not-allowed disabled:opacity-100">
+                      <SelectItem value="generic">Generic</SelectItem>
+                      <SelectItem value="toys">Toys</SelectItem>
+                      <SelectItem value="decoration">Decoration</SelectItem>
+                      <SelectItem value="imported">Imported</SelectItem>
+                      <SelectItem value="study-essentials">
+                        Study Essentials
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-      {/* Price */}
-      <div className="space-y-2">
-        <Label htmlFor="price">Price</Label>
-        <Input
-          type="number"
-          name="price"
-          value={formData.price}
-          onChange={handleChange}
-          required
-          min={0}
-        />
-      </div>
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Price</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      disabled={!isEditing}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-      {/* Description */}
-      <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
-        <Textarea
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-        />
-      </div>
-
-      {/* Category */}
-      <div className="space-y-2">
-        <Label htmlFor="category">Category</Label>
-        <Input
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-        />
-      </div>
-
-      {/* Stock */}
-      <div className="space-y-2">
-        <Label htmlFor="stock">Stock</Label>
-        <Input
-          type="number"
-          name="stock"
-          value={formData.stock}
-          onChange={handleChange}
-          required
-          min={0}
-        />
-      </div>
-
-      {/* Brand */}
-      <div className="space-y-2">
-        <Label htmlFor="brand">Brand</Label>
-        <Input name="brand" value={formData.brand} onChange={handleChange} />
-      </div>
-
-      {/* Colors */}
-      <div className="space-y-2">
-        <Label>Colors (comma separated)</Label>
-        <Input
-          value={formData.colors?.join(", ")}
-          onChange={(e) => handleArrayChange("colors", e.target.value)}
-        />
-      </div>
-
-      {/* Sizes */}
-      <div className="space-y-2">
-        <Label>Sizes (comma separated)</Label>
-        <Input
-          value={formData.sizes?.join(", ")}
-          onChange={(e) => handleArrayChange("sizes", e.target.value)}
-        />
-      </div>
-
-      {/* Images */}
-      <div className="space-y-2">
-        <Label>Image URLs (comma separated)</Label>
-        <Input
-          value={formData.images?.join(", ")}
-          onChange={(e) => handleArrayChange("images", e.target.value)}
-        />
-      </div>
-
-      {/* Tags */}
-      <div className="space-y-2">
-        <Label>Tags (comma separated)</Label>
-        <Input
-          value={formData.tags?.join(", ")}
-          onChange={(e) => handleArrayChange("tags", e.target.value)}
-        />
-      </div>
-
-      {/* Featured */}
-      <div className="flex items-center space-x-2">
-        <input
-          type="checkbox"
-          name="isFeatured"
-          checked={formData.isFeatured}
-          onChange={handleChange}
-          className="w-4 h-4"
-        />
-        <Label htmlFor="isFeatured" className="cursor-pointer">
-          Featured
-        </Label>
-      </div>
-
-      {/* Submit */}
-      <Button type="submit" className="w-full">
-        Save Changes
-      </Button>
-    </form>
+            <FormField
+              control={form.control}
+              name="stock"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Stock</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      disabled={!isEditing}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex justify-between gap-4">
+            <Button
+              type="button"
+              className={`cursor-pointer ${isEditing ? "hidden" : ""}`}
+              disabled={isUpdateLoading}
+              variant="outline"
+              onClick={() => {
+                setIsEditing(true);
+              }}
+            >
+              <Edit size={16} /> Edit
+            </Button>
+            <Button
+              type="button"
+              disabled={isUpdateLoading}
+              variant="outline"
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={isUpdateLoading}
+              variant="default"
+            >
+              {isUpdateLoading ? "Updating..." : "Update Product"}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 };
 
-export default EditProductForm;
+export default EditUserForm;

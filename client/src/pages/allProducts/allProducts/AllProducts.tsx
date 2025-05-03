@@ -1,19 +1,21 @@
+import ProductCard from "@/components/ProductCard";
 import { productDto } from "@/dto/productDto";
 import { useGetProductsQuery } from "@/redux/features/proudct/productApi";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 
 const AllProducts = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [inStockOnly, setInStockOnly] = useState(false);
 
-
-  const { data, isError: isProductsError, isLoading: isProductsLoading } = useGetProductsQuery({});
+  const {
+    data,
+    isError: isProductsError,
+    isLoading: isProductsLoading,
+  } = useGetProductsQuery({});
   if (isProductsLoading) return <div>Loading...</div>;
   if (isProductsError) return <div>Error loading products</div>;
-  const products : productDto[] = data?.data || [];
-
+  const products: productDto[] = data?.data || [];
 
   const filteredProducts = products?.filter((product) => {
     const matchesSearch =
@@ -51,9 +53,13 @@ const AllProducts = () => {
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="p-2 border">
+          className="p-2 border"
+        >
           {uniqueCategories.map((cat) => (
-            <option key={cat} value={cat}>
+            <option
+              key={cat}
+              value={cat}
+            >
               {cat}
             </option>
           ))}
@@ -74,37 +80,8 @@ const AllProducts = () => {
         <p className="text-gray-500">No products found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {filteredProducts?.map((product:productDto) => (
-            <div
-              key={product._id}
-              className="border p-4 hover:shadow-md transition flex flex-col">
-              <img
-                src={product?.images[0]}
-                alt={product.name}
-                className="w-full object-cover mb-3"
-              />
-              <h3 className="text-lg font-semibold text-gray-800">
-                {product.name}
-              </h3>
-              <p className="text-sm text-gray-500">By {product.brand}</p>
-              <p className="text-sm text-gray-600 mt-1">
-                Category: {product.category}
-              </p>
-              <p className="text-[#1E2525] font-semibold mt-1">
-                ${product.price}
-              </p>
-              <p
-                className={`text-sm mt-1 ${
-                  product.stock > 0 ? "text-green-600" : "text-red-500"
-                }`}>
-                {product.stock > 0 ? "In Stock" : "Out of Stock"}
-              </p>
-              <Link
-                to={`/products/${product._id}`}
-                className="inline-block bg-[#1E2525] hover:bg-black text-white text-sm font-medium px-4 py-2 mt-4 text-center transition">
-                View Details
-              </Link>
-            </div>
+          {filteredProducts?.map((product: productDto, index:number) => (
+            <ProductCard product={product} key={index}></ProductCard>
           ))}
         </div>
       )}

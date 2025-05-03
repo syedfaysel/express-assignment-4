@@ -1,7 +1,7 @@
 import { useCreateProductMutation } from "@/redux/features/proudct/productApi";
 
 const CreateProduct = () => {
-    const [createProduct,{isError,isLoading}]=useCreateProductMutation();
+    const [createProduct]=useCreateProductMutation();
 
     const product = {
         name: "PegBoard",

@@ -3,27 +3,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { productDto } from "@/dto/productDto";
 
-export type Product = {
-  name: string;
-  price: number;
-  description?: string;
-  category?: string;
-  stock: number;
-  brand?: string;
-  colors: string[];
-  sizes: string[];
-  images: string[];
-  tags: string[];
-  isFeatured: boolean;
-};
 
 type AddProductFormProps = {
-  onSubmit: (newProduct: Product) => void;
+  onSubmit: (newProduct: Partial<productDto>) => void;
 };
 
 const AddProductForm: React.FC<AddProductFormProps> = ({ onSubmit }) => {
-  const [formData, setFormData] = useState<Product>({
+  const [formData, setFormData] = useState<Partial<productDto>>({
     name: "",
     price: 0,
     description: "",
@@ -47,7 +35,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ onSubmit }) => {
     }));
   };
 
-  const handleArrayChange = (name: keyof Product, value: string) => {
+  const handleArrayChange = (name: keyof productDto, value: string) => {
     const arr = value.split(",").map((item) => item.trim());
     setFormData((prev) => ({ ...prev, [name]: arr }));
   };
@@ -71,6 +59,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ onSubmit }) => {
           value={formData.name}
           onChange={handleChange}
           required
+          placeholder="e.g. Japanese Marker Pen"
         />
       </div>
 
@@ -83,7 +72,8 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ onSubmit }) => {
           value={formData.price}
           onChange={handleChange}
           required
-          min={0}
+          min={1}
+          placeholder="e.g. 100"
         />
       </div>
 
@@ -94,6 +84,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ onSubmit }) => {
           name="description"
           value={formData.description}
           onChange={handleChange}
+          placeholder="e.g. This is a great product for kids"
         />
       </div>
 
@@ -104,6 +95,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ onSubmit }) => {
           name="category"
           value={formData.category}
           onChange={handleChange}
+          placeholder="e.g. generic"
         />
       </div>
 
@@ -116,14 +108,16 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ onSubmit }) => {
           value={formData.stock}
           onChange={handleChange}
           required
-          min={0}
+          min={1}
+          placeholder="e.g. 100"
         />
       </div>
 
       {/* Brand */}
       <div className="space-y-2">
         <Label htmlFor="brand">Brand</Label>
-        <Input name="brand" value={formData.brand} onChange={handleChange} />
+        <Input name="brand" value={formData.brand} onChange={handleChange} placeholder="e.g Deli, Good Luck"/>
+      
       </div>
 
       {/* Colors */}
@@ -132,6 +126,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ onSubmit }) => {
         <Input
           value={formData.colors?.join(", ") || ""}
           onChange={(e) => handleArrayChange("colors", e.target.value)}
+          placeholder="e.g. red, blue, green"
         />
       </div>
 
@@ -141,6 +136,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ onSubmit }) => {
         <Input
           value={formData.sizes?.join(", ") || ""}
           onChange={(e) => handleArrayChange("sizes", e.target.value)}
+          placeholder="e.g. S, M, L, A4, A5"
         />
       </div>
 
@@ -150,6 +146,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ onSubmit }) => {
         <Input
           value={formData.images?.join(", ") || ""}
           onChange={(e) => handleArrayChange("images", e.target.value)}
+          placeholder="e.g. https://website.com/image1.jpg, https://website.com/image2.jpg"
         />
       </div>
 
@@ -159,6 +156,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ onSubmit }) => {
         <Input
           value={formData.tags?.join(", ") || ""}
           onChange={(e) => handleArrayChange("tags", e.target.value)}
+          placeholder="e.g. summer, sale, new, notebooks"
         />
       </div>
 

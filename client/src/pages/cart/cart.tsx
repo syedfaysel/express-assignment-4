@@ -1,36 +1,17 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 
-// import { makePaymentRequest } from "@/utils/api";
 import { useAppSelector } from "@/redux/hooks";
 import { selectCartItems } from "@/redux/features/cart/cartSlice";
 import Wrapper from "@/layout/Wrapper";
 import CartItem from "./cartItem";
-import { toast } from "sonner";
 
 const Cart = () => {
-  const [loading, setLoading] = useState(false);
   const cartItems = useAppSelector(selectCartItems);
 
   const subTotal = useMemo(() => {
     return cartItems.reduce((total, val) => total + val.price, 0);
   }, [cartItems]);
-
-
-  const handlePayment = async () => {
-    try {
-      setTimeout(() => {
-        setLoading(true);
-        console.log("Checkout processing...");
-        // Simulate payment processing
-      }, 2000);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      toast.error("Checkout Failed.Please try again.");
-      console.log(error);
-    }
-  };
 
   return (
     <div className="mx-3 md:mx-0 md:py-20">
@@ -82,18 +63,9 @@ const Cart = () => {
 
                 <Link
                   to={"/checkout"}
-                  className={`w-full py-4 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75 flex items-center gap-2 justify-center ${
-                    loading ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                  className={`w-full py-4 rounded-full bg-black text-white text-lg font-medium transition-transform active:scale-95 mb-3 hover:opacity-75 flex items-center gap-2 justify-center`}
                 >
                   Checkout
-                  {loading && (
-                    <img
-                      src="/spinner.svg"
-                      alt="Loading"
-                      className="w-5 h-5"
-                    />
-                  )}
                 </Link>
               </div>
 
