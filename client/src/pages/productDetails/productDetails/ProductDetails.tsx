@@ -18,14 +18,15 @@ const ProductDetails = () => {
   const [showError, setShowError] = useState<boolean>(false);
 
   const { data, isError, isLoading } = useGetSingleProductQuery({ productId });
+  console.log(data);
   const navigate = useNavigate();
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading product</div>;
 
   const product: productDto = data?.data;
-  const needsSize = product.sizes?.length;
-  const needsColor = product.colors?.length;
+  const needsSize = product?.sizes?.length;
+  const needsColor = product?.colors?.length;
 
 
 

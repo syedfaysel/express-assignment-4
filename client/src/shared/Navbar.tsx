@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Menu, X } from "lucide-react"; 
+import { useCallback, useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 import logo from "../assets/store-logo.png";
 import { NavLink } from "react-router-dom";
 import { useAppSelector } from "@/redux/hooks";
@@ -15,17 +15,31 @@ const navLinks = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const isLoggedIn = useAppSelector(selectToken);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const handleScroll = useCallback(() => {
+    const currentScroll = window.scrollY;
+    if (currentScroll > scrollPosition) {
+      setShowNavbar(false);
+    } else {
+      setShowNavbar(true);
+    }
+    setScrollPosition(currentScroll);
+  }, [scrollPosition]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   return (
-    <nav className="px-6 py-2 font-[space-grotesk] bg-[#FAF7F0]">
+    <nav
+      className={`fixed top-0 left-0 w-full z-50  transition-all duration-300 bg-[#FAF7F0] px-2 md:px-6 py-1.5
+      } ${showNavbar ? "translate-y-0" : "-translate-y-full"}`}>
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="text-2xl font-bold">
           <NavLink to="/">
-            <img
-              className="w-16"
-              src={logo}
-              alt=""
-            />
+            <img className="w-16" src={logo} alt="" />
           </NavLink>
         </div>
 
@@ -34,12 +48,10 @@ const Navbar = () => {
           {navLinks.map((link) => (
             <li key={link.name}>
               <NavLink
-                
                 to={link.href}
                 className={({ isActive }) =>
                   isActive ? "text-slate-800 font-semibold" : "hover:text-black"
-                }
-              >
+                }>
                 {link.name}
               </NavLink>
             </li>
@@ -72,14 +84,13 @@ const Navbar = () => {
         )}
 
         {/* Mobile Menu Button & Cart */}
-        <div className="flex items-center md:hidden">
+        <div className="flex items-center md:hidden space-x-2">
           <div className="inline">
             <CartOnHeader />
           </div>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-gray-700 focus:outline-none"
-          >
+            className="md:hidden text-gray-700 focus:outline-none">
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -89,10 +100,7 @@ const Navbar = () => {
       {isOpen && (
         <div className="md:hidden mt-4 space-y-4 text-center">
           {navLinks.map((link) => (
-            <NavLink
-              to={link.href}
-              className="block text-gray-700"
-            >
+            <NavLink to={link.href} className="block text-gray-700">
               {link.name}
             </NavLink>
           ))}
