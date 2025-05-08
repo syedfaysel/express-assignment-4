@@ -10,37 +10,33 @@ export default function ProductCard({ product }: { product: productDto }) {
       {product !== undefined && (
         <Link
           to={`/products/${product._id}`}
-          className="relative flex flex-col h-full overflow-hidden transition-shadow duration-300 bg-white rounded shadow-md"
+          className="relative flex flex-col h-full overflow-hidden bg-white rounded"
         >
           <img
             src={`${product.images[0]}`}
             className="object-cover w-full h-64"
             alt={product.name}
           />
-          <Badge
-            className={clsx(
-              "absolute top-0 right-0 text-sm font-semibold bg-yellow-500 text-black",
-              product.category === "generic" && "bg-blue-500 text-white",
-              product.category === "study-essentials" &&
-                "bg-green-500 text-white"
-            )}
-          >
-            {product.category.toUpperCase()}
-          </Badge>
+
+          {/* Offer Badge */}
+          {product.isOffer && (
+            <Badge className="absolute top-2 right-2 text-sm font-semibold bg-red-500 text-white">
+              Offer
+            </Badge>
+          )}
+
+          {/* Product Details */}
           <div className="flex flex-col flex-grow p-5 border border-t-0">
             <div className="mb-2 font-semibold uppercase">
-              <p className="transition-colors duration-200 text-blue-gray-900 hover:text-deep-purple-accent-700">
-                {/* <MapPinned color="#009348" /> */}
-              </p>
+              {/* Any extra icons you may want to add */}
             </div>
 
-            <h3 className="text-xl font-semibold text-gray-800">
-              {product.name}
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-800">{product.name}</h3>
             <p>
               By <span className="text-teal-700">{product.brand}</span>
             </p>
 
+            {/* Product Tags */}
             {product?.tags?.length ? (
               <p className="my-2">
                 <strong>Tags:</strong> <br />
@@ -56,9 +52,21 @@ export default function ProductCard({ product }: { product: productDto }) {
             ) : (
               ""
             )}
-            <p className="font-semibold mt-1">
-              Price: <FormatTaka amount={product.price} />
-            </p>
+
+            {/* Price */}
+            <div className="mt-2">
+              {product.isOffer && (
+                <p className="text-sm text-gray-500 !line-through">
+                  <FormatTaka className="line-through" amount={product.oldPrice} />
+                  
+                </p>
+              )}
+              <p className="text-xl font-semibold text-gray-900">
+                <FormatTaka amount={product.price} />
+              </p>
+            </div>
+
+            {/* Stock Status */}
             <p
               className={`mt-1 ${
                 product.stock > 0 ? "text-green-600" : "text-red-500"
@@ -69,11 +77,11 @@ export default function ProductCard({ product }: { product: productDto }) {
                 : "Out of Stock"}
             </p>
 
-            {/* Product Card Footer:: stick to bottom */}
+            {/* Product Card Footer */}
             <div className="mt-auto pt-4">
               <button
                 type="button"
-                aria-label=""
+                aria-label="View Product Details"
                 className="inline-flex items-center font-semibold transition-colors duration-200 text-green-800 hover:underline cursor-pointer"
               >
                 View Details

@@ -11,6 +11,8 @@ export interface IProduct {
   images?: string[];
   tags?: string[];
   isFeatured?: boolean;
+  isOffer?: boolean;
+  oldPrice?: number;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -36,7 +36,7 @@ const Navbar = () => {
     <><nav
     className={`fixed top-0 left-0 w-full z-50  transition-all duration-300 bg-[#FAF7F0] px-2 md:px-6 py-1.5
     } ${showNavbar ? "translate-y-0" : "-translate-y-full"}`}>
-    <div className="max-w-7xl mx-auto flex justify-between items-center">
+    <div className="max-w-[1600px] mx-auto flex justify-between items-center">
       <div className="text-2xl font-bold">
         <NavLink to="/">
           <img className="w-16" src={logo} alt="" />

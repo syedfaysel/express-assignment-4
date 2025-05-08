@@ -14,6 +14,8 @@ const productSchema = new Schema<IProduct>(
     images: { type: [String], default: [] },
     tags: { type: [String], default: [] },
     isFeatured: { type: Boolean, default: false },
+    isOffer: { type: Boolean, default: false },
+    oldPrice: { type: Number, min: 0 },
   },
   {
     timestamps: true,

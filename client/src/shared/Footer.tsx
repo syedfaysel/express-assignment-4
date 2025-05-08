@@ -29,7 +29,7 @@ const socialLinks = [
 const Footer = () => {
   return (
     <footer className="bg-[#1E2525] text-gray-300 py-10 font-[gosefin-sans]">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="max-w-[1600px] mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Brand Info */}
         <div>
           <h2 className="text-xl font-bold text-[#F4EEE0] mb-2">

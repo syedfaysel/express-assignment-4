@@ -11,7 +11,8 @@ export type productDto = {
   images: string[];
   tags?: string[];
   isFeatured?: boolean;
+  isOffer?: boolean;
+  oldPrice?: number;
   createdAt: Date;
   updatedAt: Date;
-
 }

@@ -20,7 +20,7 @@ const FeaturedProducts = () => {
   const featured = products.slice(0, 6);
   return (
     <SectionLayout title="Featured Products">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 auto-rows-fr">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 auto-rows-fr">
         {featured.map((product: productDto) => (
           <ProductCard key={product._id} product={product} />
         ))}
