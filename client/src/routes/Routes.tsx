@@ -21,6 +21,7 @@ import Checkout from "@/pages/cart/checkout";
 // import ManageOrders from "@/pages/dashboard/order/ManageOrders";
 import ViewOrdersPage from "@/pages/dashboard/order/ViewOrders";
 import ManageOrdersAlt from "@/pages/dashboard/order/ManageOrdersAlt";
+import CategoriesProduct from "@/pages/categoriesProduct/CategoriesProduct";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: "/products",
         element: <AllProducts></AllProducts>,
+      },
+      {
+        path: "/products/category/:productCategory",
+        element: <CategoriesProduct/>,
       },
       {
         path: "/products/:productId",

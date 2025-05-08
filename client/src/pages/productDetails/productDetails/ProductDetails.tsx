@@ -18,7 +18,6 @@ const ProductDetails = () => {
   const [showError, setShowError] = useState<boolean>(false);
 
   const { data, isError, isLoading } = useGetSingleProductQuery({ productId });
-  console.log(data);
   const navigate = useNavigate();
 
   if (isLoading) return <div>Loading...</div>;

@@ -14,14 +14,6 @@ const productApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.productTag],
     }),
 
-    getSingleProduct: builder.query({
-      query: ({ productId }) => ({
-        url: `/products/${productId}`,
-        method: "GET",
-      }),
-      providesTags: [tagTypes.productTag],
-    }),
-
     createProduct: builder.mutation({
       query: (data) => ({
         url: "/products/add-product",
@@ -31,13 +23,29 @@ const productApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.productTag],
     }),
 
-     updateProduct: builder.mutation({
+    getProductsByCategory: builder.query({
+      query: ({ productCategory }) => ({
+        url: `/products/category/${productCategory}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.productTag],
+    }),
+
+    getSingleProduct: builder.query({
+      query: ({ productId }) => ({
+        url: `/products/${productId}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.productTag],
+    }),
+
+    updateProduct: builder.mutation({
       query: ({ productId, data }) => ({
         url: `/products/${productId}`,
-        method: "PATCH", 
+        method: "PATCH",
         body: data,
-       }),
-       invalidatesTags: [tagTypes.productTag],
+      }),
+      invalidatesTags: [tagTypes.productTag],
     }),
 
     deleteProduct: builder.mutation({
@@ -47,13 +55,12 @@ const productApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.productTag],
     }),
-    
-
   }),
 });
 
 export const {
   useGetProductsQuery,
+  useGetProductsByCategoryQuery,
   useGetSingleProductQuery,
   useCreateProductMutation,
   useUpdateProductMutation,

@@ -26,6 +26,18 @@ const getAllProducts = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getProductByCategory = catchAsync(async (req: Request, res: Response) => {
+  const category = req.params.category;
+  const result = await productServices.getProductByCategoryFromDB(category);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Product fetched successfully by category',
+    data: result,
+  });
+});
+
 const getProductById = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
   const result = await productServices.getProductByIdFromDB(id);
@@ -76,6 +88,7 @@ const deleteProduct = catchAsync(async (req: Request, res: Response) => {
 export const productControllers = {
   addNewProduct,
   getAllProducts,
+  getProductByCategory,
   getProductById,
   updateProduct,
   updateProductById,
