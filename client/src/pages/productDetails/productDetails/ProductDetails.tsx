@@ -6,11 +6,28 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useGetSingleProductQuery } from "@/redux/features/proudct/productApi";
 import { productDto } from "@/dto/productDto";
 import FormatTaka from "@/components/FormatTaka";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Star } from "lucide-react";
+
+// Optional: You should have this or replace with your UI
+// const SuggestedCard = ({ product }: { product: productDto }) => (
+//   <div className="border p-4 rounded shadow-sm">
+//     <img
+//       src={product.images?.[0]}
+//       alt={product.name}
+//       className="h-40 w-full object-cover mb-2 rounded"
+//     />
+//     <h4 className="font-semibold">{product.name}</h4>
+//     <p className="text-sm text-gray-500">{product.brand}</p>
+//     <p className="text-sm text-gray-700">
+//       <FormatTaka amount={product.price} />
+//     </p>
+//   </div>
+// );
 
 const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [selectedSize, setSelectedSize] = useState<string | undefined>();
   const [selectedColor, setSelectedColor] = useState<string | undefined>();
@@ -18,7 +35,6 @@ const ProductDetails = () => {
   const [showError, setShowError] = useState<boolean>(false);
 
   const { data, isError, isLoading } = useGetSingleProductQuery({ productId });
-  const navigate = useNavigate();
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading product</div>;
@@ -27,13 +43,11 @@ const ProductDetails = () => {
   const needsSize = product?.sizes?.length;
   const needsColor = product?.colors?.length;
 
-
-
   const notify = () => {
     toast.success("Checkout Cart", {
       description: `${product.name} has been added`,
       duration: 3000,
-      icon: <ShoppingBag className="m-4"/>,
+      icon: <ShoppingBag className="m-4" />,
       action: {
         label: "Go to Cart",
         onClick: () => navigate("/cart"),
@@ -48,7 +62,7 @@ const ProductDetails = () => {
         block: "center",
         behavior: "smooth",
       });
-      return; // stop execution if validation fails
+      return;
     }
 
     setShowError(false);
@@ -94,7 +108,7 @@ const ProductDetails = () => {
           <h2 className="text-3xl font-bold text-gray-800">{product.name}</h2>
           <p className="text-gray-600 text-lg">{product.description}</p>
 
-          <div className="text-lg text-gray-700">
+          <div className="text-lg text-gray-700 space-y-1">
             <p>
               <span className="font-extrabold">Price:</span>{" "}
               <FormatTaka amount={product.price} />
@@ -108,12 +122,11 @@ const ProductDetails = () => {
               {product.brand}
             </p>
             <p>
-              <span className="font-extrabold">Availability:</span>{" "}
+              <span className="font-extrabold">Availability:</span>
               <span
                 className={
                   product.stock > 0 ? "text-green-600" : "text-red-600"
-                }
-              >
+                }>
                 {product.stock > 0
                   ? `In Stock (${product.stock})`
                   : "Out of Stock"}
@@ -121,58 +134,59 @@ const ProductDetails = () => {
             </p>
           </div>
 
-          <div
-            id="sizesGrid"
-            className="flex flex-wrap gap-4"
-          >
-            {needsSize ? (
+          {/* Ratings */}
+          <div className="mt-4">
+            <p className="text-lg font-extrabold mb-1">Rating:</p>
+            <div className="flex items-center gap-1">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <span key={i}>
+                  {product.averageRating &&
+                  i <= Math.round(product.averageRating) ? (
+                   <Star className="text-yellow-500" />
+                  ) : (
+                     <Star className="text-gray-300" />
+                  )}
+                </span>
+              ))}
+              <span className="ml-2 text-sm text-gray-600">
+                {product.averageRating
+                  ? product.averageRating.toFixed(1)
+                  : "(No rating yet)"}
+              </span>
+            </div>
+          </div>
+
+          <div id="sizesGrid" className="flex flex-wrap gap-4">
+            {needsSize && (
               <select
                 onChange={(e) => setSelectedSize(e.target.value)}
                 defaultValue=""
-                className="border px-3 py-1 rounded"
-              >
-                <option
-                  value=""
-                  disabled
-                >
+                className="border px-3 py-1 rounded">
+                <option value="" disabled>
                   Select Size
                 </option>
-                {product.sizes?.map((color) => (
-                  <option
-                    key={color}
-                    value={color}
-                  >
-                    {color}
+                {product.sizes?.map((size) => (
+                  <option key={size} value={size}>
+                    {size}
                   </option>
                 ))}
               </select>
-            ) : (
-              ""
             )}
 
-            {needsColor ? (
+            {needsColor && (
               <select
                 onChange={(e) => setSelectedColor(e.target.value)}
                 defaultValue=""
-                className="border px-3 py-1 rounded"
-              >
-                <option
-                  value=""
-                  disabled
-                >
+                className="border px-3 py-1 rounded">
+                <option value="" disabled>
                   Select Color
                 </option>
                 {product.colors?.map((color) => (
-                  <option
-                    key={color}
-                    value={color}
-                  >
+                  <option key={color} value={color}>
                     {color}
                   </option>
                 ))}
               </select>
-            ) : (
-              ""
             )}
 
             <div className="flex items-center gap-2">
@@ -180,8 +194,8 @@ const ProductDetails = () => {
               <input
                 type="number"
                 min={1}
-                value={quantity as number}
-                onChange={(e) => handleQuantityChange(e)}
+                value={quantity}
+                onChange={handleQuantityChange}
                 className="w-16 border px-2 py-1 rounded"
               />
             </div>
@@ -198,12 +212,23 @@ const ProductDetails = () => {
               product.stock > 0
                 ? "bg-[#1E2525] hover:bg-[#1E2525]"
                 : "bg-gray-400 cursor-not-allowed"
-            }`}
-          >
+            }`}>
             {product.stock ? "Add to Cart" : "Unavailable"}
           </button>
         </div>
       </div>
+
+      {/* Suggested Products */}
+      {/* {product.suggestedProducts?.length ? (
+        <div className="mt-16">
+          <h3 className="text-2xl font-bold mb-4">You may also like</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {product.suggestedProducts.map((item) => (
+              <SuggestedCard key={item._id} product={item} />
+            ))}
+          </div>
+        </div>
+      ) : null} */}
     </div>
   );
 };

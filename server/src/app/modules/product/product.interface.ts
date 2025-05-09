@@ -13,6 +13,12 @@ export interface IProduct {
   isFeatured?: boolean;
   isOffer?: boolean;
   oldPrice?: number;
+
+  // New fields
+  ratings?: { userId: string; star: number }[];
+  averageRating?: number;
+  suggestedProducts?: string[];
+
   createdAt: Date;
   updatedAt: Date;
 }

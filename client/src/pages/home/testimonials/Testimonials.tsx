@@ -74,7 +74,7 @@ const Testimonials = () => {
             1024: { slidesPerView: 4 },
           }}>
           {testimonials.map(({ id, name, comment, image }) => (
-            <SwiperSlide key={id}>
+            <SwiperSlide className="pb-16" key={id}>
               <div className="bg-white rounded-2xl p-6 mx-2 text-center pb-10">
                 <img
                   src={image}

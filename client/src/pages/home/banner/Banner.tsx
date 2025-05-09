@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const Banner = () => {
   return (
     <section
-      className="relative bg-cover bg-center h-screen md:h-[80vh] flex items-center justify-center"
+      className="relative bg-cover bg-center h-[70vh] md:h-[80vh] flex items-center justify-center"
       style={{
         backgroundImage: `url('https://plus.unsplash.com/premium_photo-1663957923326-f05b0b3912e8?q=80&w=1943&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
       }}>

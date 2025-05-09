@@ -22,6 +22,7 @@ import Checkout from "@/pages/cart/checkout";
 import ViewOrdersPage from "@/pages/dashboard/order/ViewOrders";
 import ManageOrdersAlt from "@/pages/dashboard/order/ManageOrdersAlt";
 import CategoriesProduct from "@/pages/categoriesProduct/CategoriesProduct";
+import Contact from "@/pages/contact/Contact";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <About></About>,
+      },
+      {
+        path: "/contact",
+        element: <Contact/>,
       },
       {
         path: "/orders/success/:trxId",

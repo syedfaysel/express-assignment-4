@@ -3,7 +3,7 @@ import cors from 'cors';
 import { ProductRoutes } from './app/modules/product/product.route';
 import authRoute from './app/modules/auth/auth.route';
 import userRoute from './app/modules/user/user.route';
-import config from './app/config';
+// import config from './app/config';
 import { OrderRoutes } from './app/modules/order/order.routes';
 import globalErrorHandler from './middlewares/globalErrorHandler';
 import notFoundRoute from './middlewares/notFoundRoute';
@@ -11,7 +11,7 @@ const app: Application = express();
 
 // parser and other middlewares
 app.use(express.json());
-app.use(cors({ origin: config.client_url, credentials: true }));
+app.use(cors({ origin: 'https://stationary-shop-backend-three.vercel.app', credentials: true }));
 
 app.use('/api/v1/products', ProductRoutes);
 app.use('/api/v1/auth', authRoute);

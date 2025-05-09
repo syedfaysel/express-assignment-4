@@ -10,9 +10,12 @@
   ],
   "compilerOptions": {
     "baseUrl": ".",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"]
     }
+    
   },
   
 }

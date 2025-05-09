@@ -16,6 +16,11 @@ const productSchema = new Schema<IProduct>(
     isFeatured: { type: Boolean, default: false },
     isOffer: { type: Boolean, default: false },
     oldPrice: { type: Number, min: 0 },
+    ratings: [{ userId: String, star: Number }], // Example: { userId: 'abc123', star: 4 }
+    averageRating: { type: Number, default: 0 }, // Will be calculated from ratings
+
+    // 🛍️ Suggested product IDs
+    suggestedProducts: [String], // Example: ['prod123', 'prod456']
   },
   {
     timestamps: true,

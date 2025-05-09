@@ -2,9 +2,9 @@ import SectionLayout from "@/components/SectionLayout";
 import { useState } from "react";
 
 const Faq = () => {
-  const [isOpen, setIsOpen] = useState(null);
+  const [isOpen, setIsOpen] = useState<number | null>(null);
 
-  const faqData = [
+  const faqData: FaqItem[] = [
     {
       question: "What products do you offer?",
       answer:
@@ -32,8 +32,13 @@ const Faq = () => {
     },
   ];
 
-  const toggle = (index) => {
-    setIsOpen((previndex) => (previndex === index ? null : index));
+  interface FaqItem {
+    question: string;
+    answer: string;
+  }
+
+  const toggle = (index: number): void => {
+    setIsOpen((prevIndex) => (prevIndex === index ? null : index));
   };
 
   return (

@@ -1,10 +1,9 @@
 import Loader from "@/components/Loader";
 import ProductCard from "@/components/ProductCard";
 import SectionLayout from "@/components/SectionLayout";
-import { Button } from "@/components/ui/button";
 import { productDto } from "@/dto/productDto";
 import { useGetProductsQuery } from "@/redux/features/proudct/productApi";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const FeaturedProducts = () => {
   const { data, isLoading, isError } = useGetProductsQuery({});
@@ -26,11 +25,11 @@ const FeaturedProducts = () => {
         ))}
       </div>
       <div className="flex justify-center mt-6">
-        <NavLink to={`/products`}>
-          <Button className="bg-teal-700 text-white hover:bg-teal-800 transition duration-300 ease-in-out cursor-pointer px-4 py-4">
-            View All Products
-          </Button>
-        </NavLink>
+        <Link
+          to="/products"
+          className="px-4 py-2 border border-black hover:text-black rounded  font-semibold transition">
+          View All Products
+        </Link>
       </div>
     </SectionLayout>
   );

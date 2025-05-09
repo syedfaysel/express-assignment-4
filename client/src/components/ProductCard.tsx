@@ -1,5 +1,4 @@
 import { productDto } from "@/dto/productDto";
-import clsx from "clsx";
 import { Link } from "react-router-dom";
 import { Badge } from "./ui/badge";
 import FormatTaka from "./FormatTaka";
@@ -57,7 +56,7 @@ export default function ProductCard({ product }: { product: productDto }) {
             <div className="mt-2">
               {product.isOffer && (
                 <p className="text-sm text-gray-500 !line-through">
-                  <FormatTaka className="line-through" amount={product.oldPrice} />
+                  <FormatTaka className="line-through" amount={product.oldPrice ?? 0} />
                   
                 </p>
               )}

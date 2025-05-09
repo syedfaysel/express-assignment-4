@@ -13,6 +13,12 @@ export type productDto = {
   isFeatured?: boolean;
   isOffer?: boolean;
   oldPrice?: number;
+
+  // Newly added fields
+  ratings?: { userId: string; star: number }[];
+  averageRating?: number;
+  suggestedProducts?: string[];
+
   createdAt: Date;
   updatedAt: Date;
-}
+};
